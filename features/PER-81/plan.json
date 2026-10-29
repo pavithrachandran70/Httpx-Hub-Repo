@@ -1,0 +1,170 @@
+{
+  "schema_version": 1,
+  "key": "PER-81",
+  "source": "llm",
+  "complexity": "moderate",
+  "summary": "This fix requires architectural clarity on ownership of response closure and connection pool release during cancel/timeout, plus a detailed file plan for the affected modules and tests.",
+  "track_hint": "quick",
+  "steps": [
+    {
+      "node": "analyst",
+      "activity": "requirements",
+      "why": "Establish clear requirements for async response cleanup on cancel and timeout.",
+      "instructions": "Focus on the response lifecycle: who owns closing the stream, when the connection returns to the pool, and sync/async consistency guarantees.",
+      "auto": false,
+      "status": "done",
+      "rerun": false
+    },
+    {
+      "node": "architect",
+      "activity": "hld",
+      "why": "Document which module owns closing the response on cancel or timeout and how the connection is returned to the pool.",
+      "instructions": "Define clear ownership boundaries: which component detects cancel/timeout, which closes the response stream, and which returns the connection to the pool. Address sync/async consistency.",
+      "auto": false,
+      "status": "done",
+      "rerun": false
+    },
+    {
+      "node": "scrum_master",
+      "activity": "breakdown",
+      "why": "Convert requirements and HLD into implementable stories that designer can detail.",
+      "instructions": "Create a single story for the response cleanup fix, incorporating the architectural decisions.",
+      "auto": false,
+      "status": "done",
+      "rerun": false
+    },
+    {
+      "node": "designer",
+      "activity": "lld",
+      "why": "Provide a file-level plan of the modules that change for async response close and pool release, with test coverage.",
+      "instructions": "Map out which files handle cancel detection, response cleanup, and pool return. Specify which tests cover cancel and timeout scenarios.",
+      "auto": false,
+      "status": "done",
+      "rerun": false
+    },
+    {
+      "node": "test_architect",
+      "activity": "tests",
+      "why": "AC explicitly requires regression tests for cancel and timeout while streaming.",
+      "instructions": "",
+      "auto": false,
+      "status": "done",
+      "rerun": false
+    },
+    {
+      "node": "merge_pack",
+      "activity": "pack",
+      "why": "Pack per-ticket specs into merged_plan.md for review.",
+      "instructions": "",
+      "auto": true,
+      "status": "done",
+      "rerun": false
+    },
+    {
+      "node": "architect_gate",
+      "activity": "review",
+      "why": "Human approval of specs and this plan before Dev.",
+      "instructions": "",
+      "auto": true,
+      "status": "pending",
+      "rerun": true
+    },
+    {
+      "node": "dev",
+      "activity": null,
+      "why": "Fixed execution step.",
+      "instructions": "",
+      "auto": true,
+      "status": "pending",
+      "rerun": false
+    },
+    {
+      "node": "pre_pr_qa",
+      "activity": null,
+      "why": "Fixed execution step.",
+      "instructions": "",
+      "auto": true,
+      "status": "pending",
+      "rerun": false
+    },
+    {
+      "node": "open_pr",
+      "activity": null,
+      "why": "Fixed execution step.",
+      "instructions": "",
+      "auto": true,
+      "status": "pending",
+      "rerun": false
+    },
+    {
+      "node": "pr_review",
+      "activity": null,
+      "why": "Fixed execution step.",
+      "instructions": "",
+      "auto": true,
+      "status": "pending",
+      "rerun": false
+    },
+    {
+      "node": "merge",
+      "activity": null,
+      "why": "Fixed execution step.",
+      "instructions": "",
+      "auto": true,
+      "status": "pending",
+      "rerun": false
+    }
+  ],
+  "skipped": [
+    {
+      "node": "tpm_gate",
+      "why": "Scope is clear and technical; no product sign-off needed for a bug fix."
+    },
+    {
+      "node": "critic",
+      "why": "Linear pipeline where each role refines the previous; no parallel artifacts to cross-check."
+    }
+  ],
+  "suggested_roles": [],
+  "notes": [
+    "attempt 1: designer needs ['stories'] but no earlier step produces it (plan must produce stories: analyst `inline_story` or scrum_master)"
+  ],
+  "created_at": "2026-10-29T08:18:10.292255+00:00",
+  "version": 2,
+  "trigger": "review",
+  "gate": "plan_review",
+  "feedback": [
+    {
+      "id": "hub#1:issue-6491577530",
+      "source": "pr_conversation",
+      "body": "Plan change: this is not a one-file cleanup. Add the architect step before any spec work. Document which module owns closing the response on cancel or timeout, and how the connection is returned to the pool. Do not skip architect.\r\n\r\nAlso add designer. I want a file-level plan of the modules that change (async response close and pool release) and which tests cover them, before dev.",
+      "author": "pavithrachandran70",
+      "path": null,
+      "line": null,
+      "pr": "hub#1"
+    }
+  ],
+  "feedback_errors": [],
+  "seen_feedback_ids": [
+    "hub#1:issue-6491577530"
+  ],
+  "change_summary": "Added architect (HLD) and designer (LLD) to document response ownership and provide file-level implementation plan per reviewer request; added scrum_master to produce stories that designer consumes; changed analyst to requirements activity to support the pipeline.",
+  "changes": {
+    "added": [
+      "architect",
+      "scrum_master",
+      "designer"
+    ],
+    "removed": [],
+    "rerun": [],
+    "kept": []
+  },
+  "addressed": [
+    {
+      "feedback_id": "hub#1:issue-6491577530",
+      "change": "Added architect step to document module ownership of response closure and pool release; added scrum_master to produce stories; added designer for file-level plan; changed analyst from inline_story to requirements to provide proper input for architect."
+    }
+  ],
+  "unresolved_questions": [],
+  "requires_review": true
+}
