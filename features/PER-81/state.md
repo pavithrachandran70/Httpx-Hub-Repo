@@ -1,20 +1,20 @@
 ---
 schema_version: 1
 key: PER-81
-status: waiting_architect_review
-current_node: architect_gate
+status: in_development
+current_node: dev
 track: quick
 involved_repos:
 - Https-test
 depends_on: []
 owner: pavc
-lease_until: '2026-10-31T08:35:56.146236+00:00'
-revision: 42
+lease_until: '2026-10-31T08:46:54.369063+00:00'
+revision: 49
 hub_sha: null
 ticket_hash: 73cdb71f28355b6c
 jira_hash: 73cdb71f28355b6c
-tpm_approved: false
-specs_locked: false
+tpm_approved: true
+specs_locked: true
 skills_lock:
   bmad: 1cbcfa272fe65787c06a1fa164a901f46117cca7
 stories:
@@ -30,7 +30,7 @@ pr_ids:
   hub_arch: '2'
   hub: '2'
   hub_plan: '3'
-waiting_for: architect_review
+waiting_for: null
 tokens_in: 279567
 tokens_out: 59835
 cost_anthropic_usd: 1.735902
@@ -128,6 +128,18 @@ history:
 - node: architect_gate
   note: awaiting human hub PR approval
   at: '2026-10-29T08:45:43.453851+00:00'
+- node: architect_gate
+  note: approved via hub PR (reconcile)
+  at: '2026-10-29T08:46:54.327958+00:00'
+- node: architect_gate
+  note: "forge unlocked architect_review \u2192 resume"
+  at: '2026-10-29T08:46:54.369096+00:00'
+- node: dev
+  note: starting
+  at: '2026-10-29T08:46:55.661836+00:00'
+- node: dev
+  note: done 01-Https-test (verify-ok; agent status=timeout)
+  at: '2026-10-29T09:19:14.371853+00:00'
 ---
 
 # Feature state

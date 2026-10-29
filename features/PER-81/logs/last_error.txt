@@ -1,0 +1,2 @@
+Cursor agent timed out
+Streaming reads now close the response and return the connection when they are cancelled or time out, on both the sync and async clients.

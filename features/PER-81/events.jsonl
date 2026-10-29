@@ -16,3 +16,4 @@
 {"at": "2026-10-29T08:40:55.776891+00:00", "node": "scrum_master", "event": "llm_ok", "model": "claude-sonnet-4-5-20250929", "in": 30859, "out": 5041, "cache_read": 0, "usd": 0.168192, "ms": 114041, "ok": true, "dry_run": false, "error": null}
 {"at": "2026-10-29T08:43:18.054187+00:00", "node": "designer", "event": "llm_ok", "model": "claude-sonnet-4-5-20250929", "in": 33989, "out": 8192, "cache_read": 0, "usd": 0.224847, "ms": 142255, "ok": true, "dry_run": false, "error": null}
 {"at": "2026-10-29T08:45:38.619402+00:00", "node": "test_architect", "event": "llm_ok", "model": "claude-sonnet-4-5-20250929", "in": 39332, "out": 8192, "cache_read": 0, "usd": 0.240876, "ms": 140547, "ok": true, "dry_run": false, "error": null}
+{"at": "2026-10-29T09:19:14.325755+00:00", "node": "dev", "event": "cursor_run", "ok": false, "status": "timeout", "error": "Cursor agent timed out"}
