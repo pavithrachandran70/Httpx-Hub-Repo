@@ -84,7 +84,7 @@
       "why": "Fixed execution step.",
       "instructions": "",
       "auto": true,
-      "status": "pending",
+      "status": "done",
       "rerun": false
     },
     {
@@ -93,7 +93,7 @@
       "why": "Fixed execution step.",
       "instructions": "",
       "auto": true,
-      "status": "pending",
+      "status": "done",
       "rerun": false
     },
     {

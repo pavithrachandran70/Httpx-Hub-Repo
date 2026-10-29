@@ -1,7 +1,7 @@
 ---
 schema_version: 1
 key: PER-81
-status: developed
+status: in_development
 current_node: dev
 track: quick
 involved_repos:
@@ -9,7 +9,7 @@ involved_repos:
 depends_on: []
 owner: pavc
 lease_until: '2026-10-31T08:46:54.369063+00:00'
-revision: 50
+revision: 67
 hub_sha: null
 ticket_hash: 73cdb71f28355b6c
 jira_hash: 73cdb71f28355b6c
@@ -23,17 +23,18 @@ child_ticket_keys:
 - PER-82
 critic_iterations: 0
 dev_retries: 0
-pr_revision_rounds: 0
+pr_revision_rounds: 1
 gate_rounds:
   plan: 1
 pr_ids:
   hub_arch: '2'
   hub: '2'
   hub_plan: '3'
-waiting_for: human_pr
-tokens_in: 279567
-tokens_out: 59835
-cost_anthropic_usd: 1.735902
+  Https-test: '1'
+waiting_for: dirty_worktree
+tokens_in: 346510
+tokens_out: 73494
+cost_anthropic_usd: 2.116978
 history:
 - node: intake
   note: snapshot written
@@ -143,6 +144,124 @@ history:
 - node: dev
   note: 'human_mode: code ready, PR deferred'
   at: '2026-10-29T09:19:17.848721+00:00'
+- node: dev
+  note: 'human_mode: resume opens PR'
+  at: '2026-10-29T09:30:35.763777+00:00'
+- node: pre_pr_qa
+  note: report written
+  at: '2026-10-29T09:30:35.773035+00:00'
+- node: open_pr
+  note: push Https-test ok
+  at: '2026-10-29T09:30:43.530942+00:00'
+- node: open_pr
+  note: PRs opened Https-test:1
+  at: '2026-10-29T09:30:43.530975+00:00'
+- node: pr_review
+  note: diff loaded Https-test chars=15416
+  at: '2026-10-29T09:30:44.939828+00:00'
+- node: pr_review
+  note: 'inline review Https-test: 13 comment(s)'
+  at: '2026-10-29T09:32:08.702772+00:00'
+- node: pr_review
+  note: 'Https-test:needs_human:major:**AC gap: Sync `read()` cleanup guard is overly
+    narrow**
+
+
+    The `finally` block at'
+  at: '2026-10-29T09:32:13.619882+00:00'
+- node: pr_review
+  note: 'Https-test:needs_human:major:**AC gap: Sync `iter_bytes()` cleanup guard
+    is overly narrow**
+
+
+    The `finally` bl'
+  at: '2026-10-29T09:32:17.636113+00:00'
+- node: pr_review
+  note: 'Https-test:issue:major:**AC gap: Async `aread()` cleanup guard is overly
+    narrow**
+
+
+    The `finally` block '
+  at: '2026-10-29T09:32:29.858529+00:00'
+- node: pr_review
+  note: "major issue classified \u2192 human (deferred; continue auto-fix)"
+  at: '2026-10-29T09:32:32.495277+00:00'
+- node: pr_review
+  note: 'Https-test:issue:major:**AC gap: Async `aiter_bytes()` cleanup guard is overly
+    narrow**
+
+
+    The `finally` '
+  at: '2026-10-29T09:32:34.235813+00:00'
+- node: pr_review
+  note: "major issue classified \u2192 human (deferred; continue auto-fix)"
+  at: '2026-10-29T09:32:36.383937+00:00'
+- node: pr_review
+  note: 'Https-test:needs_human:major:**AD-4 violation: Pool release shielding implementation
+    is incomplete**
+
+
+    The dif'
+  at: '2026-10-29T09:32:38.536894+00:00'
+- node: pr_review
+  note: 'Https-test:issue:moderate:**Test artifact gap: `_inflight_requests()` helper
+    is fragile and may break in p'
+  at: '2026-10-29T09:32:42.091668+00:00'
+- node: pr_review
+  note: 'Https-test:issue:moderate:**AC-4 gap: No explicit test for "no RuntimeError
+    when client exits"**
+
+
+    AC-4 req'
+  at: '2026-10-29T09:32:46.628278+00:00'
+- node: pr_review
+  note: 'Https-test:issue:minor:**Test artifact gap: Sync `_inflight_requests()` has
+    same fragility as async ver'
+  at: '2026-10-29T09:32:50.464184+00:00'
+- node: pr_review
+  note: 'Https-test:issue:moderate:**AC-4 gap: No explicit test for "no RuntimeError
+    when sync client exits"**
+
+
+    AC-'
+  at: '2026-10-29T09:32:53.943359+00:00'
+- node: pr_review
+  note: 'Https-test:not_an_issue:None:**Edge case: Double cleanup when `read()` is
+    called on already-consumed response'
+  at: '2026-10-29T09:32:57.261753+00:00'
+- node: pr_review
+  note: 'Https-test:not_an_issue:None:**Edge case: Async double cleanup when `aread()`
+    is called on already-consumed r'
+  at: '2026-10-29T09:33:00.644111+00:00'
+- node: pr_review
+  note: 'Https-test:issue:moderate:**Test completeness gap: Missing test for `asyncio.CancelledError`
+    path**
+
+
+    The t'
+  at: '2026-10-29T09:33:04.805966+00:00'
+- node: pr_review
+  note: 'Https-test:not_an_issue:None:**Potential consequence: Shielding the entire
+    `stream.aclose()` may delay cancel'
+  at: '2026-10-29T09:33:08.122271+00:00'
+- node: pr_review
+  note: auto-fix tier=moderate round=1
+  at: '2026-10-29T09:33:10.003979+00:00'
+- node: pr_review
+  note: "route moderate \u2192 designer then dev"
+  at: '2026-10-29T09:33:12.007893+00:00'
+- node: designer
+  note: lld updated
+  at: '2026-10-29T09:35:26.404950+00:00'
+- node: dev
+  note: starting
+  at: '2026-10-29T09:35:26.405018+00:00'
+- node: dev
+  note: starting
+  at: '2026-10-29T11:51:12.854229+00:00'
+- node: dev
+  note: dirty worktree stashed
+  at: '2026-10-29T11:51:12.936729+00:00'
 ---
 
 # Feature state

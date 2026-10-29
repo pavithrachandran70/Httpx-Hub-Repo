@@ -1,0 +1,45 @@
+{
+  "comment_ids": [
+    "4410687814",
+    "4410687821",
+    "4410687829",
+    "4410687833",
+    "4410687863"
+  ],
+  "tier": "moderate",
+  "stories": [
+    "01-Https-test"
+  ],
+  "items": [
+    {
+      "comment_id": "4410687814",
+      "repo": "Https-test",
+      "path": "tests/client/test_async_client_cancel.py",
+      "tier": "moderate"
+    },
+    {
+      "comment_id": "4410687821",
+      "repo": "Https-test",
+      "path": "tests/client/test_async_client_cancel.py",
+      "tier": "moderate"
+    },
+    {
+      "comment_id": "4410687829",
+      "repo": "Https-test",
+      "path": "tests/client/test_client_cancel.py",
+      "tier": "minor"
+    },
+    {
+      "comment_id": "4410687833",
+      "repo": "Https-test",
+      "path": "tests/client/test_client_cancel.py",
+      "tier": "moderate"
+    },
+    {
+      "comment_id": "4410687863",
+      "repo": "Https-test",
+      "path": "tests/client/test_async_client_cancel.py",
+      "tier": "moderate"
+    }
+  ]
+}
