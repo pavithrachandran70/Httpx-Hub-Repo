@@ -23,16 +23,16 @@ Also add designer. I want a file-level plan of the modules that change (async re
 
 ## Steps
 
-1. [ ] **analyst (requirements)** _(rerun)_ — Establish clear requirements for async response cleanup on cancel and timeout.
+1. [x] **analyst (requirements)** — Establish clear requirements for async response cleanup on cancel and timeout.
    - focus: Focus on the response lifecycle: who owns closing the stream, when the connection returns to the pool, and sync/async consistency guarantees.
-2. [ ] **architect (hld)** — Document which module owns closing the response on cancel or timeout and how the connection is returned to the pool.
+2. [x] **architect (hld)** — Document which module owns closing the response on cancel or timeout and how the connection is returned to the pool.
    - focus: Define clear ownership boundaries: which component detects cancel/timeout, which closes the response stream, and which returns the connection to the pool. Address sync/async consistency.
-3. [ ] **scrum_master (breakdown)** — Convert requirements and HLD into implementable stories that designer can detail.
+3. [x] **scrum_master (breakdown)** — Convert requirements and HLD into implementable stories that designer can detail.
    - focus: Create a single story for the response cleanup fix, incorporating the architectural decisions.
-4. [ ] **designer (lld)** — Provide a file-level plan of the modules that change for async response close and pool release, with test coverage.
+4. [x] **designer (lld)** — Provide a file-level plan of the modules that change for async response close and pool release, with test coverage.
    - focus: Map out which files handle cancel detection, response cleanup, and pool return. Specify which tests cover cancel and timeout scenarios.
-5. [ ] **test_architect (tests)** _(rerun)_ — AC explicitly requires regression tests for cancel and timeout while streaming.
-6. [ ] **merge_pack (pack)** _(auto)_ — Pack per-ticket specs into merged_plan.md for review.
+5. [x] **test_architect (tests)** — AC explicitly requires regression tests for cancel and timeout while streaming.
+6. [x] **merge_pack (pack)** _(auto)_ — Pack per-ticket specs into merged_plan.md for review.
 7. [ ] **architect_gate (review)** _(auto)_ _(rerun)_ — Human approval of specs and this plan before Dev.
 8. [ ] **dev** _(auto)_ — Fixed execution step.
 9. [ ] **pre_pr_qa** _(auto)_ — Fixed execution step.
