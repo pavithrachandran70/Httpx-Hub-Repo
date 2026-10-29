@@ -1,38 +1,42 @@
-# Plan — PER-81 (v2)
+# Plan — PER-81 (v3)
 
-- made from: review feedback (plan_review)
+- made from: review feedback (architect_review)
 - source: LLM planner
 - complexity: moderate
 - needs plan review: yes
 - track hint: quick
 
-This fix requires architectural clarity on ownership of response closure and connection pool release during cancel/timeout, plus a detailed file plan for the affected modules and tests.
+Response cleanup ownership moved from client dispatcher to Response.aread/aiter_bytes with try/finally and shielded pool release; architect and designer rerun to propagate the new design.
 
 ## What changed
 
-Added architect (HLD) and designer (LLD) to document response ownership and provide file-level implementation plan per reviewer request; added scrum_master to produce stories that designer consumes; changed analyst to requirements activity to support the pipeline.
+Ownership of async response cleanup moved from AsyncClient._send_single_request to Response.aread/aiter_bytes with try/finally; aclose() now shields pool release with asyncio.shield. Architect, scrum_master, and designer rerun to propagate this design change through HLD, breakdown, and LLD.
 
-- Added: architect, scrum_master, designer
+- Rerun: architect, scrum_master, designer, test_architect
+- Kept (results reused): analyst
 
 ## Feedback that informed this version
 
-- **PR comment** by pavithrachandran70 on hub#1 `[hub#1:issue-6491577530]`: Plan change: this is not a one-file cleanup. Add the architect step before any spec work. Document which module owns closing the response on cancel or timeout, and how the connection is returned to the pool. Do not skip architect.
+- **PR comment** by pavithrachandran70 on hub#2 `[hub#2:issue-6491891340]`: HLD AD-1 and AD-4 are wrong. Do not catch CancelledError or TimeoutError in AsyncClient._send_single_request and then call aclose().
 
-Also add designer. I want a file-level plan of the modules that change (async response close and pool release) and which tests cover them, before dev.
-  - addressed by: Added architect step to document module ownership of response closure and pool release; added scrum_master to produce stories; added designer for file-level plan; changed analyst from inline_story to requirements to provide proper input for architect.
+Change the design:
+- Response.aread and Response.aiter_bytes own the cleanup, not the client dispatcher.
+- Wrap the body read in try/finally and always call aclose() on the way out, including cancel and timeout.
+- Shield the pool release inside aclose() with asyncio.shield so a second cancel during close still returns the connection.
+- Update the HLD, the file touch list, and the tests to match this. The client dispatcher must not own this path.
+  - addressed by: Architect rewrites AD-1 and AD-4 to place cleanup in Response.aread/aiter_bytes with try/finally and shielded pool release; designer updates file plan to reflect _models.py as primary touch, not _client.py dispatcher.
 
 ## Steps
 
-1. [x] **analyst (requirements)** — Establish clear requirements for async response cleanup on cancel and timeout.
-   - focus: Focus on the response lifecycle: who owns closing the stream, when the connection returns to the pool, and sync/async consistency guarantees.
-2. [x] **architect (hld)** — Document which module owns closing the response on cancel or timeout and how the connection is returned to the pool.
-   - focus: Define clear ownership boundaries: which component detects cancel/timeout, which closes the response stream, and which returns the connection to the pool. Address sync/async consistency.
-3. [x] **scrum_master (breakdown)** — Convert requirements and HLD into implementable stories that designer can detail.
-   - focus: Create a single story for the response cleanup fix, incorporating the architectural decisions.
-4. [x] **designer (lld)** — Provide a file-level plan of the modules that change for async response close and pool release, with test coverage.
-   - focus: Map out which files handle cancel detection, response cleanup, and pool return. Specify which tests cover cancel and timeout scenarios.
-5. [x] **test_architect (tests)** — AC explicitly requires regression tests for cancel and timeout while streaming.
-6. [x] **merge_pack (pack)** _(auto)_ — Pack per-ticket specs into merged_plan.md for review.
+1. [x] **analyst (requirements)** — Requirements are still valid; no changes to AC.
+   - focus: Keep existing requirements unchanged.
+2. [ ] **architect (hld)** _(rerun)_ — AD-1 and AD-4 must reflect that Response.aread and Response.aiter_bytes own cleanup, not the client dispatcher.
+   - focus: Replace AD-1: Response.aread and Response.aiter_bytes wrap body read in try/finally and always call aclose() on exit, including cancel and timeout. Replace AD-4: aclose() shields pool release with asyncio.shield so a second cancel during close still returns the connection. Update file touch list to reflect httpx/_models.py (Response) as primary, not _client.py dispatcher.
+3. [ ] **scrum_master (breakdown)** _(rerun)_ — Story description and scope must match the new ownership model.
+4. [ ] **designer (lld)** _(rerun)_ — File plan must center on Response.aread/aiter_bytes and aclose() shielding, not client dispatcher exception handling.
+   - focus: Move cleanup logic from _client.py to _models.py Response.aread and Response.aiter_bytes (try/finally). Add asyncio.shield to pool release in Response.aclose(). Update test plan to verify cleanup is owned by response methods, not dispatcher.
+5. [ ] **test_architect (tests)** _(rerun)_ — Test cases are unchanged; regression tests for cancel and timeout are still required.
+6. [ ] **merge_pack (pack)** _(auto)_ _(rerun)_ — Pack per-ticket specs into merged_plan.md for review.
 7. [ ] **architect_gate (review)** _(auto)_ _(rerun)_ — Human approval of specs and this plan before Dev.
 8. [ ] **dev** _(auto)_ — Fixed execution step.
 9. [ ] **pre_pr_qa** _(auto)_ — Fixed execution step.
@@ -44,7 +48,3 @@ Also add designer. I want a file-level plan of the modules that change (async re
 
 - **tpm_gate** — Scope is clear and technical; no product sign-off needed for a bug fix.
 - **critic** — Linear pipeline where each role refines the previous; no parallel artifacts to cross-check.
-
-## Planner notes
-
-- attempt 1: designer needs ['stories'] but no earlier step produces it (plan must produce stories: analyst `inline_story` or scrum_master)
