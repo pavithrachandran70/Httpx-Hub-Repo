@@ -1,30 +1,50 @@
-# Plan — PER-81 (v1)
+# Plan — PER-81 (v2)
 
-- made from: ticket
+- made from: review feedback (plan_review)
 - source: LLM planner
-- complexity: simple
+- complexity: moderate
 - needs plan review: yes
 - track hint: quick
 
-A focused bug fix for resource cleanup on cancelled async requests; only inline story and tests are needed since the behavior is fully specified and scoped to one repo.
+This fix requires architectural clarity on ownership of response closure and connection pool release during cancel/timeout, plus a detailed file plan for the affected modules and tests.
+
+## What changed
+
+Added architect (HLD) and designer (LLD) to document response ownership and provide file-level implementation plan per reviewer request; added scrum_master to produce stories that designer consumes; changed analyst to requirements activity to support the pipeline.
+
+- Added: architect, scrum_master, designer
+
+## Feedback that informed this version
+
+- **PR comment** by pavithrachandran70 on hub#1 `[hub#1:issue-6491577530]`: Plan change: this is not a one-file cleanup. Add the architect step before any spec work. Document which module owns closing the response on cancel or timeout, and how the connection is returned to the pool. Do not skip architect.
+
+Also add designer. I want a file-level plan of the modules that change (async response close and pool release) and which tests cover them, before dev.
+  - addressed by: Added architect step to document module ownership of response closure and pool release; added scrum_master to produce stories; added designer for file-level plan; changed analyst from inline_story to requirements to provide proper input for architect.
 
 ## Steps
 
-1. [ ] **analyst (inline_story)** — The ticket already states clear behavior and acceptance criteria for a single-repo fix.
-   - focus: Focus on the async cancellation cleanup path and ensure AC coverage includes both timeout and explicit cancel scenarios.
-2. [ ] **test_architect (tests)** — AC explicitly requires regression tests for cancel and timeout scenarios.
-   - focus: Map each AC point to a test case, especially the drip/stream body scenarios and the in-flight RuntimeError check.
-3. [ ] **architect_gate (review)** _(auto)_ — Human approval of specs and this plan before Dev.
-4. [ ] **dev** _(auto)_ — Fixed execution step.
-5. [ ] **pre_pr_qa** _(auto)_ — Fixed execution step.
-6. [ ] **open_pr** _(auto)_ — Fixed execution step.
-7. [ ] **pr_review** _(auto)_ — Fixed execution step.
-8. [ ] **merge** _(auto)_ — Fixed execution step.
+1. [ ] **analyst (requirements)** _(rerun)_ — Establish clear requirements for async response cleanup on cancel and timeout.
+   - focus: Focus on the response lifecycle: who owns closing the stream, when the connection returns to the pool, and sync/async consistency guarantees.
+2. [ ] **architect (hld)** — Document which module owns closing the response on cancel or timeout and how the connection is returned to the pool.
+   - focus: Define clear ownership boundaries: which component detects cancel/timeout, which closes the response stream, and which returns the connection to the pool. Address sync/async consistency.
+3. [ ] **scrum_master (breakdown)** — Convert requirements and HLD into implementable stories that designer can detail.
+   - focus: Create a single story for the response cleanup fix, incorporating the architectural decisions.
+4. [ ] **designer (lld)** — Provide a file-level plan of the modules that change for async response close and pool release, with test coverage.
+   - focus: Map out which files handle cancel detection, response cleanup, and pool return. Specify which tests cover cancel and timeout scenarios.
+5. [ ] **test_architect (tests)** _(rerun)_ — AC explicitly requires regression tests for cancel and timeout while streaming.
+6. [ ] **merge_pack (pack)** _(auto)_ — Pack per-ticket specs into merged_plan.md for review.
+7. [ ] **architect_gate (review)** _(auto)_ _(rerun)_ — Human approval of specs and this plan before Dev.
+8. [ ] **dev** _(auto)_ — Fixed execution step.
+9. [ ] **pre_pr_qa** _(auto)_ — Fixed execution step.
+10. [ ] **open_pr** _(auto)_ — Fixed execution step.
+11. [ ] **pr_review** _(auto)_ — Fixed execution step.
+12. [ ] **merge** _(auto)_ — Fixed execution step.
 
 ## Skipped roles
 
 - **tpm_gate** — Scope is clear and technical; no product sign-off needed for a bug fix.
-- **architect** — No new components, APIs, or cross-repo changes; fix is localized to async response cleanup.
-- **scrum_master** — Single story in one repo; no breakdown needed.
-- **designer** — Implementation approach is straightforward from the AC; no file plan needed before coding.
-- **critic** — Only one spec document produced; nothing to cross-check.
+- **critic** — Linear pipeline where each role refines the previous; no parallel artifacts to cross-check.
+
+## Planner notes
+
+- attempt 1: designer needs ['stories'] but no earlier step produces it (plan must produce stories: analyst `inline_story` or scrum_master)
