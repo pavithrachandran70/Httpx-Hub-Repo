@@ -37,7 +37,7 @@ Change the design:
    - focus: Move cleanup logic from _client.py to _models.py Response.aread and Response.aiter_bytes (try/finally). Add asyncio.shield to pool release in Response.aclose(). Update test plan to verify cleanup is owned by response methods, not dispatcher.
 5. [x] **test_architect (tests)** — Test cases are unchanged; regression tests for cancel and timeout are still required.
 6. [x] **merge_pack (pack)** _(auto)_ — Pack per-ticket specs into merged_plan.md for review.
-7. [ ] **architect_gate (review)** _(auto)_ _(rerun)_ — Human approval of specs and this plan before Dev.
+7. [x] **architect_gate (review)** _(auto)_ — Human approval of specs and this plan before Dev.
 8. [ ] **dev** _(auto)_ — Fixed execution step.
 9. [ ] **pre_pr_qa** _(auto)_ — Fixed execution step.
 10. [ ] **open_pr** _(auto)_ — Fixed execution step.
