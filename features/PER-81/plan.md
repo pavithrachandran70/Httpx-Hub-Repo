@@ -28,15 +28,16 @@ Change the design:
 
 ## Steps
 
-1. [x] **analyst (requirements)** — Requirements are still valid; no changes to AC.
-   - focus: Keep existing requirements unchanged.
-2. [ ] **architect (hld)** _(rerun)_ — AD-1 and AD-4 must reflect that Response.aread and Response.aiter_bytes own cleanup, not the client dispatcher.
-   - focus: Replace AD-1: Response.aread and Response.aiter_bytes wrap body read in try/finally and always call aclose() on exit, including cancel and timeout. Replace AD-4: aclose() shields pool release with asyncio.shield so a second cancel during close still returns the connection. Update file touch list to reflect httpx/_models.py (Response) as primary, not _client.py dispatcher.
-3. [ ] **scrum_master (breakdown)** _(rerun)_ — Story description and scope must match the new ownership model.
-4. [ ] **designer (lld)** _(rerun)_ — File plan must center on Response.aread/aiter_bytes and aclose() shielding, not client dispatcher exception handling.
-   - focus: Move cleanup logic from _client.py to _models.py Response.aread and Response.aiter_bytes (try/finally). Add asyncio.shield to pool release in Response.aclose(). Update test plan to verify cleanup is owned by response methods, not dispatcher.
-5. [ ] **test_architect (tests)** _(rerun)_ — Test cases are unchanged; regression tests for cancel and timeout are still required.
-6. [ ] **merge_pack (pack)** _(auto)_ _(rerun)_ — Pack per-ticket specs into merged_plan.md for review.
+1. [x] **analyst (requirements)** — Establish clear requirements for async response cleanup on cancel and timeout.
+   - focus: Focus on the response lifecycle: who owns closing the stream, when the connection returns to the pool, and sync/async consistency guarantees.
+2. [x] **architect (hld)** — Document which module owns closing the response on cancel or timeout and how the connection is returned to the pool.
+   - focus: Define clear ownership boundaries: which component detects cancel/timeout, which closes the response stream, and which returns the connection to the pool. Address sync/async consistency.
+3. [x] **scrum_master (breakdown)** — Convert requirements and HLD into implementable stories that designer can detail.
+   - focus: Create a single story for the response cleanup fix, incorporating the architectural decisions.
+4. [x] **designer (lld)** — Provide a file-level plan of the modules that change for async response close and pool release, with test coverage.
+   - focus: Map out which files handle cancel detection, response cleanup, and pool return. Specify which tests cover cancel and timeout scenarios.
+5. [x] **test_architect (tests)** — AC explicitly requires regression tests for cancel and timeout while streaming.
+6. [x] **merge_pack (pack)** _(auto)_ — Pack per-ticket specs into merged_plan.md for review.
 7. [ ] **architect_gate (review)** _(auto)_ _(rerun)_ — Human approval of specs and this plan before Dev.
 8. [ ] **dev** _(auto)_ — Fixed execution step.
 9. [ ] **pre_pr_qa** _(auto)_ — Fixed execution step.
