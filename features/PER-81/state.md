@@ -1,7 +1,7 @@
 ---
 schema_version: 1
 key: PER-81
-status: in_development
+status: developed
 current_node: dev
 track: quick
 involved_repos:
@@ -9,7 +9,7 @@ involved_repos:
 depends_on: []
 owner: pavc
 lease_until: '2026-10-31T08:46:54.369063+00:00'
-revision: 67
+revision: 77
 hub_sha: null
 ticket_hash: 73cdb71f28355b6c
 jira_hash: 73cdb71f28355b6c
@@ -31,7 +31,7 @@ pr_ids:
   hub: '2'
   hub_plan: '3'
   Https-test: '1'
-waiting_for: dirty_worktree
+waiting_for: human_pr
 tokens_in: 346510
 tokens_out: 73494
 cost_anthropic_usd: 2.116978
@@ -262,6 +262,12 @@ history:
 - node: dev
   note: dirty worktree stashed
   at: '2026-10-29T11:51:12.936729+00:00'
+- node: dev
+  note: starting
+  at: '2026-10-29T11:53:57.090240+00:00'
+- node: dev
+  note: 'human_mode: code ready, PR deferred'
+  at: '2026-10-29T11:53:57.132040+00:00'
 ---
 
 # Feature state

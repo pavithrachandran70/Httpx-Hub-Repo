@@ -105,3 +105,6 @@
 2026-10-29T11:51:12.853129+00:00 heartbeat dev
 2026-10-29T11:51:12.853613+00:00 node start dev
 2026-10-29T11:51:12.956691+00:00 node end dev waiting=dirty_worktree
+2026-10-29T11:53:57.089523+00:00 heartbeat dev
+2026-10-29T11:53:57.089787+00:00 node start dev
+2026-10-29T11:53:57.132308+00:00 node end dev waiting=human_pr
