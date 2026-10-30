@@ -10,7 +10,7 @@ A focused bug fix in one repo with clear acceptance criteria; analyst inline_sto
 
 ## Steps
 
-1. [ ] **analyst (inline_story)** — Ticket fully specifies the bug and acceptance criteria; one story is enough.
+1. [x] **analyst (inline_story)** — Ticket fully specifies the bug and acceptance criteria; one story is enough.
    - focus: Focus on auth resolution parity between stream() and request()/get()/post() methods, emphasizing the regression test requirements for both sync and async clients.
 2. [ ] **architect_gate (review)** _(auto)_ — Human approval of specs and this plan before Dev.
 3. [ ] **dev** _(auto)_ — Fixed execution step.
