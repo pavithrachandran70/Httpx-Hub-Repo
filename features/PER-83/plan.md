@@ -29,7 +29,7 @@ In the LLD, the cleanup must call response.aclose() from a finally block around 
 3. [x] **designer (lld)** — Write the file-level plan of the modules that change and the tests that cover them.
    - focus: In the AsyncClient file plan, specify that response.aclose() must be called from a finally block around the stream read, ensuring both cancel and timeout close the response before the error propagates. Name the finally block explicitly in the file plan for httpx/_client.py. Keep the regression tests in tests/client/test_async_client.py.
 4. [x] **merge_pack (pack)** _(auto)_ — Pack per-ticket specs into merged_plan.md for review.
-5. [ ] **architect_gate (review)** _(auto)_ _(rerun)_ — Human approval of specs and this plan before Dev.
+5. [x] **architect_gate (review)** _(auto)_ — Human approval of specs and this plan before Dev.
 6. [ ] **dev** _(auto)_ — Fixed execution step.
 7. [ ] **pre_pr_qa** _(auto)_ — Fixed execution step.
 8. [ ] **open_pr** _(auto)_ — Fixed execution step.

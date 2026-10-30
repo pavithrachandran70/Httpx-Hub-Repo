@@ -65,3 +65,10 @@
 2026-10-30T06:33:21.617260+00:00 heartbeat architect_gate
 2026-10-30T06:33:21.617301+00:00 node start architect_gate
 2026-10-30T06:33:26.318748+00:00 node end architect_gate waiting=architect_review
+2026-10-30T06:34:18.820700+00:00 heartbeat dev
+2026-10-30T06:34:18.820857+00:00 node start dev
+2026-10-30T06:34:19.830788+00:00 dev cursor 01-Https-test attempt=1
+2026-10-30T06:34:19.832782+00:00 node fail dev: CursorCliExecutor.run_story() got an unexpected keyword argument 'test_command'
+2026-10-30T06:46:55.936693+00:00 heartbeat dev
+2026-10-30T06:46:55.936795+00:00 node start dev
+2026-10-30T06:46:56.028199+00:00 node end dev waiting=dirty_worktree
