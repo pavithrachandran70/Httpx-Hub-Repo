@@ -1,4 +1,4 @@
-# Plan — PER-89 (v1)
+# Plan — PER-89 (v2)
 
 - made from: ticket
 - source: LLM planner
@@ -6,7 +6,7 @@
 - needs plan review: yes
 - track hint: quick
 
-A documentation-only typo fix with no behavior change requires only an inline story with the file location and correction.
+A simple typo fix in documentation requires only an inline story with the file location and correction.
 
 ## Steps
 
@@ -21,9 +21,9 @@ A documentation-only typo fix with no behavior change requires only an inline st
 
 ## Skipped roles
 
-- **tpm_gate** — Typo fix has unambiguous scope needing no product review.
-- **architect** — Documentation change has no technical design or contracts.
-- **scrum_master** — Single-file typo fix does not split into multiple stories.
-- **designer** — Typo correction needs no implementation design.
-- **test_architect** — Documentation typo has no testable behavior.
-- **critic** — Only one artifact (inline story) exists; nothing to cross-check.
+- **tpm_gate** — No product scope ambiguity; simple typo fix.
+- **architect** — No technical design needed for a text correction.
+- **scrum_master** — Single change in one file; no breakdown required.
+- **designer** — No implementation planning needed for a typo fix.
+- **test_architect** — Documentation change has no testable behavior.
+- **critic** — Only one artifact (the story); nothing to cross-check.
