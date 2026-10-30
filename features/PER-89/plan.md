@@ -10,8 +10,8 @@ A simple typo fix in documentation requires only an inline story with the file l
 
 ## Steps
 
-1. [x] **analyst (inline_story)** — Single-file documentation fix with clear scope needs only a story with acceptance criteria.
-   - focus: Identify the exact file and line containing 'equivelent' and write a story to change it to 'equivalent'.
+1. [x] **analyst (inline_story)** — Single typo fix needs only AC and file guidance.
+   - focus: Focus on identifying the exact file and line with the typo; acceptance criteria is simply that 'equivelent' is changed to 'equivalent' and nothing else.
 2. [ ] **architect_gate (review)** _(auto)_ — Human approval of specs and this plan before Dev.
 3. [ ] **dev** _(auto)_ — Fixed execution step.
 4. [ ] **pre_pr_qa** _(auto)_ — Fixed execution step.
