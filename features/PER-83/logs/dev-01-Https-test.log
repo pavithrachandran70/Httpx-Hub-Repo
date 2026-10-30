@@ -6,3 +6,20 @@ The forge review gap is closed. Each cancel and timeout test now waits for the c
 - `tests/client/test_client.py` — `test_sync_timeout_during_stream_closes_response` does the same for the sync `with` block (AC3).
 
 Those four tests passed (7 runs, including both anyio backends) in 2.63s.The broader client-module test run was stopped after it produced no output. The four cancel and timeout tests that cover the exit check had already passed.
+PER-83 is already implemented on `feat/PER-83`. A cancelled or timed-out async read now closes the response before the client exits, so the connection pool is not left with an in-flight request.
+
+`AsyncClient.send()` and `Client.send()` both wrap the send and body read in `try`/`finally`. The `finally` block is marked `response_cleanup_on_cancel`. If a response exists and is still open, it calls `aclose()` or `close()` before a cancellation, timeout, or any other error leaves the method. Streaming responses stay open for the caller; `stream()` already closes those on the way out.
+
+The new tests cover cancel via `asyncio.wait_for`, a client read timeout, cancel during `aiter_bytes()`, and the same timeout path on the sync client. Each one checks that the response is closed, the pool has no in-flight requests, and client exit does not raise `RuntimeError: The connection pool was closed while ...`.
+
+**Files changed**
+
+- `httpx/_client.py` — cleanup `finally` on the sync and async send paths
+- `tests/client/test_async_client.py` — three async regression tests
+- `tests/client/test_client.py` — sync timeout parity test
+- `tests/conftest.py` — uvicorn startup gives up after 10 seconds instead of hanging
+- `.gitignore` — local tooling and cache entries
+
+**Tests**
+
+The four new tests passed (7 cases with the asyncio and trio backends) in 2.76s. `tests/test_timeouts.py` did not run: the shared uvicorn fixture never starts in this environment (`websockets.legacy` deprecation warning during server setup). That fixture was left as-is.

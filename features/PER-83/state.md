@@ -1,15 +1,15 @@
 ---
 schema_version: 1
 key: PER-83
-status: changes_requested
-current_node: pr_review
+status: in_development
+current_node: dev
 track: quick
 involved_repos:
 - Https-test
 depends_on: []
 owner: pavc
 lease_until: '2026-11-01T06:34:17.718531+00:00'
-revision: 82
+revision: 87
 hub_sha: null
 ticket_hash: 73cdb71f28355b6c
 jira_hash: 73cdb71f28355b6c
@@ -30,7 +30,7 @@ pr_ids:
   hub: '5'
   hub_plan: '6'
   Https-test: '2'
-waiting_for: spec_revision
+waiting_for: null
 tokens_in: 161092
 tokens_out: 32945
 cost_anthropic_usd: 0.938459
@@ -144,7 +144,7 @@ history:
   note: starting
   at: '2026-10-30T06:47:42.984956+00:00'
 - node: dev
-  note: done 01-Https-test (verify-ok; agent status=error)
+  note: prior pass 01-Https-test (verify-ok; agent status=error)
   at: '2026-10-30T07:22:45.668507+00:00'
 - node: dev
   note: 'human_mode: code ready, PR deferred'
@@ -217,7 +217,7 @@ history:
   note: starting
   at: '2026-10-30T07:27:53.306254+00:00'
 - node: dev
-  note: done 01-Https-test
+  note: prior pass 01-Https-test
   at: '2026-10-30T07:33:57.284606+00:00'
 - node: dev
   note: 'human_mode: code ready, PR deferred'
@@ -234,6 +234,15 @@ history:
 - node: pr_review
   note: "major issue \u2192 delta spec gate (human) after minor/moderate auto-fix"
   at: '2026-10-30T07:34:17.346248+00:00'
+- node: dev
+  note: restart from development; architecture and locked specs kept
+  at: '2026-10-30T07:45:00.000000+00:00'
+- node: dev
+  note: starting
+  at: '2026-10-30T07:45:35.742435+00:00'
+- node: dev
+  note: done 01-Https-test
+  at: '2026-10-30T07:48:26.285625+00:00'
 ---
 
 # Feature state
