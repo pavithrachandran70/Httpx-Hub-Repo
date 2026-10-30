@@ -1,0 +1,5 @@
+The typo fix is already in the tree, so no files were changed.
+
+`README.md` does not contain `equivelent`. The SSL note in `docs/advanced/ssl.md` (line 32) already reads `equivalent`, from upstream commit `ca097c9` (`docs/ssl: fix typo`). The only remaining `equivelent` string is in the story file itself, which was left as written.
+
+No tests were run. The story is documentation-only and says none are needed.
