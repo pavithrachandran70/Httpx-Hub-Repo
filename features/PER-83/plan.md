@@ -26,9 +26,8 @@ In the LLD, the cleanup must call response.aclose() from a finally block around 
 
 1. [x] **analyst (inline_story)** — The ticket already specifies the bug, acceptance criteria, and a repro; one implementable story is sufficient.
 2. [x] **architect (hld)** — Document which module closes the async response on cancel or timeout and how the connection is returned to the pool.
-   - focus: Focus on the async response cleanup mechanism: which module closes the response, how the connection returns to the pool, and the cancel/timeout handling contract.
 3. [x] **designer (lld)** — Write the file-level plan of the modules that change and the tests that cover them.
-   - focus: Produce a concrete file plan for the modules handling async response cleanup, and specify the tests covering cancel and timeout scenarios.
+   - focus: In the AsyncClient file plan, specify that response.aclose() must be called from a finally block around the stream read, ensuring both cancel and timeout close the response before the error propagates. Name the finally block explicitly in the file plan for httpx/_client.py. Keep the regression tests in tests/client/test_async_client.py.
 4. [x] **merge_pack (pack)** _(auto)_ — Pack per-ticket specs into merged_plan.md for review.
 5. [ ] **architect_gate (review)** _(auto)_ _(rerun)_ — Human approval of specs and this plan before Dev.
 6. [ ] **dev** _(auto)_ — Fixed execution step.

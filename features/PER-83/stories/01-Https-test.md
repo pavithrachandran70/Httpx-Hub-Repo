@@ -11,7 +11,7 @@
 
 ## Overview
 
-This LLD specifies the file-level changes required to close the async response stream when a request is cancelled or times out mid-read, preventing the `RuntimeError: The connection pool was closed while 1 HTTP requests/responses were still in-flight.` The fix adds cancellation/timeout exception handling to the response iteration path in `AsyncClient`, ensuring `response.aclose()` is called before the exception propagates.
+This LLD specifies the file-level changes required to close the async response stream when a request is cancelled or times out mid-read, preventing the `RuntimeError: The connection pool was closed while 1 HTTP requests/responses were still in-flight.` The fix adds a `finally` block around the response streaming path in `AsyncClient`, ensuring `response.aclose()` is called before any cancellation or timeout exception propagates.
 
 ---
 
@@ -68,14 +68,14 @@ This LLD specifies the file-level changes required to close the async response s
 
 **File:** `httpx/_client.py`
 
-**Change:** Add cancellation/timeout exception handling to `AsyncClient` methods that manage response streaming.
+**Change:** Add `finally` block around response streaming in `AsyncClient` methods to ensure cleanup on cancellation or timeout.
 
 **Implementation location:** The `AsyncClient.request()` method or the layer that manages response streaming (e.g., response context manager or internal `_send_handling_redirects()`).
 
 **Approach:**
-- Wrap response body streaming in `try/except` to catch `asyncio.CancelledError` and `asyncio.TimeoutError`
-- On exception: call `await response.aclose()` to release connection to pool
-- Re-raise the exception unchanged to preserve asyncio cancellation semantics
+- Wrap response body streaming in `try/finally` block
+- In the `finally` block: call `await response.aclose()` if response exists and is not already closed
+- Ensures cleanup runs before any `asyncio.CancelledError` or `asyncio.TimeoutError` propagates
 
 **Interfaces:**
 
@@ -84,9 +84,10 @@ class AsyncClient:
     async def request(self, method, url, **kwargs) -> Response:
         """
         Post-fix behavior:
-        - If asyncio.CancelledError or asyncio.TimeoutError raised during
-          response streaming, calls response.aclose() before re-raising
+        - Response streaming wrapped in try/finally block
+        - Finally block calls response.aclose() before any exception propagates
         - Ensures connection is returned to pool and in-flight count is zero
+          on cancellation or timeout
         """
         pass
 ```
@@ -102,18 +103,24 @@ async def request(self, method, url, **kwargs):
         response = await self._send_handling_redirects(...)
         # Response body consumption happens here or in user code
         return response
-    except (asyncio.CancelledError, asyncio.TimeoutError):
+    finally:
+        # Cleanup finally block (named: response_cleanup_on_cancel)
         # Fix: close response if it exists and is not already closed
+        # This runs whether the request completes normally, is cancelled,
+        # times out, or raises any other exception
         if response is not None and not response.is_closed:
             await response.aclose()
-        raise  # Re-raise unchanged
 ```
+
+**Finally block naming:** The `finally` block ensuring response cleanup is explicitly named in comments as `response_cleanup_on_cancel` for clarity and traceability.
 
 **Edge cases:**
 - Response is `None` (exception before response creation) → no-op in cleanup
 - Response already closed by user code → `aclose()` is idempotent, no-op
 - Multiple concurrent requests cancelled → each handles its own response independently
-- Exception during `aclose()` itself → allow to propagate (connection pool cleanup failure is a separate issue)
+- Exception during `aclose()` itself → propagates, but this is a separate connection pool issue
+
+**Key invariant:** The `finally` block runs **before** any exception (cancel, timeout, or otherwise) propagates to the caller, ensuring the connection is always returned to the pool.
 
 ---
 
@@ -390,33 +397,40 @@ async def slow_stream_app(scope, receive, send):
 - `release(connection)` removes the connection from the in-flight set and marks it as available
 - `AsyncClient.__aexit__` (or `ConnectionPool.aclose()`) checks the in-flight set and raises `RuntimeError` if non-empty
 
-**Post-fix invariant:** No connections remain in-flight when `AsyncClient.__aexit__()` runs, because all responses are closed by cancellation handlers or normal cleanup.
+**Post-fix invariant:** No connections remain in-flight when `AsyncClient.__aexit__()` runs, because all responses are closed by the `finally` block before any exception propagates.
 
 ---
 
 ## Algorithm Notes
 
-### Response cleanup on cancellation
+### Response cleanup on cancellation (finally block pattern)
 
 **Pattern:**
 
 ```python
+# Named finally block: response_cleanup_on_cancel
 response = None
 try:
     # Create response and initiate streaming
     response = await self._send_handling_redirects(...)
     return response
-except (asyncio.CancelledError, asyncio.TimeoutError):
-    # Cleanup: close response if it exists and is not already closed
+finally:
+    # response_cleanup_on_cancel: Close response before any exception propagates
+    # This runs on normal completion, cancellation, timeout, or any other exception
     if response is not None and not response.is_closed:
         await response.aclose()
-    raise  # Re-raise unchanged
 ```
 
 **Key invariants:**
-- Cleanup runs before re-raise (exception propagates only after connection is returned)
+- `finally` block runs **before** any exception propagates (cancel, timeout, or otherwise)
+- Cleanup is unconditional: response is closed whether the request completes normally or abnormally
 - `response.is_closed` check avoids double-close (idempotent, but explicit check is clearer)
-- Re-raise preserves asyncio cancellation semantics (no exception conversion or suppression)
+- Normal return flow also benefits: response is closed even if user does not consume the body
+
+**Why `finally` over `except`:**
+- `finally` runs on **all** exit paths (normal return, exception, cancellation)
+- `except (CancelledError, TimeoutError)` would miss other exceptions (e.g., network errors)
+- `finally` ensures cleanup runs before any exception propagates, preventing in-flight connection errors
 
 ### Connection pool interaction
 
@@ -424,10 +438,10 @@ except (asyncio.CancelledError, asyncio.TimeoutError):
 
 1. `AsyncClient.request()` calls `pool.acquire()` → connection moves to in-flight set
 2. Response object created, streaming begins
-3. **Cancellation/timeout exception raised during streaming**
-4. **Fix:** Exception handler calls `await response.aclose()`
+3. **Cancellation/timeout exception raised during streaming** (or normal completion)
+4. **Fix:** `finally` block (`response_cleanup_on_cancel`) runs, calls `await response.aclose()`
 5. `response.aclose()` calls `pool.release(connection)` → connection moves to available set, removed from in-flight set
-6. Exception re-raised, propagates to user code
+6. Exception propagates to user code (if any), or normal return proceeds
 7. `AsyncClient.__aexit__` calls `pool.aclose()` → checks in-flight set, finds zero connections, clean exit
 
 ---
@@ -468,7 +482,7 @@ except (asyncio.CancelledError, asyncio.TimeoutError):
 
 ### R1: Cleanup runs during user code iteration
 
-**Risk:** If user code is iterating the response body and cancellation occurs, the cleanup handler may attempt to close the response while iteration is in progress, causing a race or double-close.
+**Risk:** If user code is iterating the response body and cancellation occurs, the `finally` block may attempt to close the response while iteration is in progress, causing a race or double-close.
 
 **Mitigation:**
 - `response.aclose()` is idempotent and safe to call mid-iteration (existing httpx contract)
@@ -487,7 +501,7 @@ except (asyncio.CancelledError, asyncio.TimeoutError):
 
 **Mitigation:**
 - Test 4 (`test_sync_timeout_during_stream_closes_response`) verifies sync behavior
-- If sync client does not already close responses on timeout, apply the same fix (wrap streaming in `try/except` for timeout exception, call `response.close()`)
+- If sync client does not already close responses on timeout, apply the same fix (wrap streaming in `try/finally`, call `response.close()` in the `finally` block)
 - Document any intentional behavioral differences (e.g., threading model limitations) in test comments or implementation notes
 
 **Likelihood:** Medium (sync and async code paths are structurally different)  
@@ -496,16 +510,17 @@ except (asyncio.CancelledError, asyncio.TimeoutError):
 
 ---
 
-### R3: Performance impact of exception handling
+### R3: Performance impact of finally block
 
-**Risk:** Adding `try/except` blocks in the hot path of response iteration could degrade performance for the common case (no cancellation).
+**Risk:** Adding a `finally` block in the hot path of response iteration could degrade performance for the common case (no cancellation).
 
 **Mitigation:**
-- Exception handling in Python has negligible overhead when no exception is raised
-- The fix only adds cleanup logic to the exceptional path (cancel/timeout), not the normal path
-- Existing httpx response handling already includes exception handling for network errors and decoders (no new pattern)
+- `finally` blocks in Python have negligible overhead when no exception is raised
+- The `finally` block only adds a single conditional check (`if response is not None and not response.is_closed`) in the normal path
+- The `response.aclose()` call in the `finally` block runs **in all cases** (normal or exceptional), but this is consistent with existing httpx response lifecycle management (responses should always be closed)
+- Existing httpx response handling already includes similar cleanup logic in context managers
 
-**Likelihood:** Very Low (exception handling is cheap in Python when not raised)  
+**Likelihood:** Very Low (finally blocks and conditional checks are cheap in Python)  
 **Impact:** Low (performance is not materially affected)  
 **Status:** Accepted (no significant overhead)
 
