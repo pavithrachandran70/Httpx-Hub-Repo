@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "key": "PER-83",
+  "source": "fallback",
+  "complexity": "simple",
+  "summary": "This is a behavioral fix in one repo with clear acceptance criteria: ensure async response streams are closed on cancel/timeout to prevent in-flight errors.",
+  "track_hint": "quick",
+  "steps": [
+    {
+      "node": "analyst",
+      "activity": "inline_story",
+      "why": "The ticket already specifies the bug, acceptance criteria, and a repro; one implementable story is sufficient.",
+      "instructions": "Focus on the cancel/timeout cleanup path for async streaming responses and the regression tests.",
+      "auto": false,
+      "status": "pending",
+      "rerun": true
+    },
+    {
+      "node": "architect_gate",
+      "activity": "review",
+      "why": "Human approval of specs and this plan before Dev.",
+      "instructions": "",
+      "auto": true,
+      "status": "pending",
+      "rerun": true
+    },
+    {
+      "node": "dev",
+      "activity": null,
+      "why": "Fixed execution step.",
+      "instructions": "",
+      "auto": true,
+      "status": "pending",
+      "rerun": false
+    },
+    {
+      "node": "pre_pr_qa",
+      "activity": null,
+      "why": "Fixed execution step.",
+      "instructions": "",
+      "auto": true,
+      "status": "pending",
+      "rerun": false
+    },
+    {
+      "node": "open_pr",
+      "activity": null,
+      "why": "Fixed execution step.",
+      "instructions": "",
+      "auto": true,
+      "status": "pending",
+      "rerun": false
+    },
+    {
+      "node": "pr_review",
+      "activity": null,
+      "why": "Fixed execution step.",
+      "instructions": "",
+      "auto": true,
+      "status": "pending",
+      "rerun": false
+    },
+    {
+      "node": "merge",
+      "activity": null,
+      "why": "Fixed execution step.",
+      "instructions": "",
+      "auto": true,
+      "status": "pending",
+      "rerun": false
+    }
+  ],
+  "skipped": [
+    {
+      "node": "tpm_gate",
+      "why": "Scope is clear and internal: fixing a resource leak bug with no ambiguity."
+    },
+    {
+      "node": "architect",
+      "why": "No new components, API changes, or cross-repo coordination; this is a cleanup fix in existing async response handling."
+    },
+    {
+      "node": "scrum_master",
+      "why": "Single behavioral fix in one repo does not need breakdown into multiple stories."
+    },
+    {
+      "node": "designer",
+      "why": "The fix location is clear from the ticket (async response cleanup on cancel); no file plan needed before coding."
+    },
+    {
+      "node": "test_architect",
+      "why": "Acceptance criteria already list concrete test cases (cancel, timeout during stream); analyst can translate these directly into test notes."
+    },
+    {
+      "node": "critic",
+      "why": "Only one spec document (the inline story) will be produced; nothing to cross-check."
+    }
+  ],
+  "suggested_roles": [],
+  "notes": [
+    "attempt 1: architect needs ['requirements.md'] but no earlier step produces it",
+    "attempt 2: Duplicate role: analyst; designer needs ['stories'] but no earlier step produces it (plan must produce stories: analyst `inline_story` or scrum_master)",
+    "planner rejected the revision twice"
+  ],
+  "created_at": "2026-10-30T06:13:19.691904+00:00",
+  "version": 2,
+  "trigger": "review",
+  "gate": "plan_review",
+  "feedback": [
+    {
+      "id": "hub#4:issue-6516292683",
+      "source": "pr_conversation",
+      "body": "Plan change: this is not a one-file cleanup. Add the architect step before any spec work. Document which module owns closing the response on cancel or timeout, and how the connection is returned to the pool. Do not skip architect.\r\n\r\nAlso add designer. I want a file-level plan of the modules that change (async response close and pool release) and which tests cover them, before dev.",
+      "author": "pavithrachandran70",
+      "path": null,
+      "line": null,
+      "pr": "hub#4"
+    }
+  ],
+  "feedback_errors": [],
+  "seen_feedback_ids": [
+    "hub#4:issue-6516292683"
+  ],
+  "change_summary": "The planner could not revise the plan (planner rejected the revision twice). The previous roles are kept and every spec step reruns with the feedback.",
+  "changes": {
+    "added": [],
+    "removed": [],
+    "rerun": [],
+    "kept": []
+  },
+  "addressed": [],
+  "unresolved_questions": [
+    "Plan not revised by the planner (planner rejected the revision twice): confirm the reruns cover the feedback."
+  ],
+  "requires_review": true
+}

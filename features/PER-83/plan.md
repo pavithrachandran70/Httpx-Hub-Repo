@@ -1,27 +1,26 @@
-# Plan — PER-83 (v3)
+# Plan — PER-83 (v4)
 
-- made from: review feedback (plan_review)
+- made from: review feedback (architect_review)
 - source: LLM planner
 - complexity: simple
 - needs plan review: yes
 - track hint: quick
 
-Resource leak fix in async response handling: analyst produces the inline story, architect documents which module closes the response on cancel/timeout and how the connection returns to the pool, designer writes the file-level plan and test coverage.
+Single behavioral fix in one repo with clear scope; rerunning designer only to add finally block around stream read in AsyncClient.
 
 ## What changed
 
-Added architect after analyst to document response cleanup and connection pooling, then designer to write file-level plan and test coverage, per reviewer guidance.
+Rerunning designer only to add finally block specification around stream read in AsyncClient for proper cleanup on cancel and timeout.
 
-- Added: architect, designer
+- Rerun: designer
+- Kept (results reused): analyst, architect
 
 ## Feedback that informed this version
 
-- **PR comment** by pavithrachandran70 on hub#4 `[hub#4:issue-6516360849]`: Plan change: keep analyst first, with activity inline_story. Do not put any other role before analyst.
+- **PR comment** by pavithrachandran70 on hub#5 `[hub#5:issue-6516499740]`: Spec change: rerun designer only. Keep analyst and architect. Do not add or remove any role.
 
-After analyst, add architect, then designer. Architect documents which module closes the async response on cancel or timeout and how the connection is returned to the pool. Designer writes the file-level plan of the modules that change and the tests that cover them.
-
-Do not add tpm_gate, scrum_master, test_architect, or critic. Do not duplicate analyst.
-  - addressed by: Kept analyst first with inline_story; added architect then designer; removed all other roles as instructed.
+In the LLD, the cleanup must call response.aclose() from a finally block around the stream read, so cancel and timeout both close the response before the error propagates. Name that finally block in the file plan for AsyncClient, and keep the regression tests in tests/client/test_async_client.py.
+  - addressed by: Designer rerun with instructions to specify response.aclose() in a finally block around stream read in AsyncClient file plan, keeping tests in test_async_client.py
 
 ## Steps
 
