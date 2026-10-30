@@ -1,15 +1,15 @@
 ---
 schema_version: 1
 key: PER-83
-status: in_development
-current_node: dev
+status: changes_requested
+current_node: pr_review
 track: quick
 involved_repos:
 - Https-test
 depends_on: []
 owner: pavc
 lease_until: '2026-11-01T06:34:17.718531+00:00'
-revision: 80
+revision: 82
 hub_sha: null
 ticket_hash: 73cdb71f28355b6c
 jira_hash: 73cdb71f28355b6c
@@ -30,10 +30,10 @@ pr_ids:
   hub: '5'
   hub_plan: '6'
   Https-test: '2'
-waiting_for: null
-tokens_in: 149476
-tokens_out: 32736
-cost_anthropic_usd: 0.925798
+waiting_for: spec_revision
+tokens_in: 161092
+tokens_out: 32945
+cost_anthropic_usd: 0.938459
 history:
 - node: intake
   note: snapshot written
@@ -219,6 +219,21 @@ history:
 - node: dev
   note: done 01-Https-test
   at: '2026-10-30T07:33:57.284606+00:00'
+- node: dev
+  note: 'human_mode: code ready, PR deferred'
+  at: '2026-10-30T07:34:00.861725+00:00'
+- node: open_pr
+  note: push Https-test ok
+  at: '2026-10-30T07:34:03.258539+00:00'
+- node: pr_review
+  note: resolved Https-test:4421360970
+  at: '2026-10-30T07:34:11.057666+00:00'
+- node: pr_review
+  note: resolved Https-test:4421360975
+  at: '2026-10-30T07:34:17.342699+00:00'
+- node: pr_review
+  note: "major issue \u2192 delta spec gate (human) after minor/moderate auto-fix"
+  at: '2026-10-30T07:34:17.346248+00:00'
 ---
 
 # Feature state
