@@ -1,0 +1,7 @@
+`FunctionAuth` is already a public export, so this story did not need any code or test edits.
+
+`from httpx import FunctionAuth` succeeds and resolves to `httpx.FunctionAuth`. The class is imported through `from ._auth import *` in `httpx/__init__.py`, and `"FunctionAuth"` is already in `__all__` in case-insensitive alphabetical order between `"DigestAuth"` and `"get"`. `tests/test_exported_members.py` builds its expected list from the module's public names, so it picks up `FunctionAuth` without a hardcoded update.
+
+`pytest tests/test_exported_members.py` passed (1 test, 0.01s).
+
+**Files changed:** none.
