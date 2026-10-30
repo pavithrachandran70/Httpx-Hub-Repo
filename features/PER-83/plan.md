@@ -1,18 +1,33 @@
-# Plan — PER-83 (v1)
+# Plan — PER-83 (v2)
 
-- made from: ticket
-- source: LLM planner
+- made from: review feedback (plan_review)
+- source: fallback (planner not used)
 - complexity: simple
 - needs plan review: yes
 - track hint: quick
 
 This is a behavioral fix in one repo with clear acceptance criteria: ensure async response streams are closed on cancel/timeout to prevent in-flight errors.
 
+## What changed
+
+The planner could not revise the plan (planner rejected the revision twice). The previous roles are kept and every spec step reruns with the feedback.
+
+
+## Unresolved feedback (needs a person)
+
+- Plan not revised by the planner (planner rejected the revision twice): confirm the reruns cover the feedback.
+
+## Feedback that informed this version
+
+- **PR comment** by pavithrachandran70 on hub#4 `[hub#4:issue-6516292683]`: Plan change: this is not a one-file cleanup. Add the architect step before any spec work. Document which module owns closing the response on cancel or timeout, and how the connection is returned to the pool. Do not skip architect.
+
+Also add designer. I want a file-level plan of the modules that change (async response close and pool release) and which tests cover them, before dev.
+
 ## Steps
 
-1. [ ] **analyst (inline_story)** — The ticket already specifies the bug, acceptance criteria, and a repro; one implementable story is sufficient.
+1. [ ] **analyst (inline_story)** _(rerun)_ — The ticket already specifies the bug, acceptance criteria, and a repro; one implementable story is sufficient.
    - focus: Focus on the cancel/timeout cleanup path for async streaming responses and the regression tests.
-2. [ ] **architect_gate (review)** _(auto)_ — Human approval of specs and this plan before Dev.
+2. [ ] **architect_gate (review)** _(auto)_ _(rerun)_ — Human approval of specs and this plan before Dev.
 3. [ ] **dev** _(auto)_ — Fixed execution step.
 4. [ ] **pre_pr_qa** _(auto)_ — Fixed execution step.
 5. [ ] **open_pr** _(auto)_ — Fixed execution step.
@@ -27,3 +42,9 @@ This is a behavioral fix in one repo with clear acceptance criteria: ensure asyn
 - **designer** — The fix location is clear from the ticket (async response cleanup on cancel); no file plan needed before coding.
 - **test_architect** — Acceptance criteria already list concrete test cases (cancel, timeout during stream); analyst can translate these directly into test notes.
 - **critic** — Only one spec document (the inline story) will be produced; nothing to cross-check.
+
+## Planner notes
+
+- attempt 1: architect needs ['requirements.md'] but no earlier step produces it
+- attempt 2: Duplicate role: analyst; designer needs ['stories'] but no earlier step produces it (plan must produce stories: analyst `inline_story` or scrum_master)
+- planner rejected the revision twice
