@@ -11,30 +11,30 @@ A single-word typo exists in SSL-related documentation within the `Https-test` r
 ## Acceptance Criteria
 
 ### AC-1: Locate and correct the typo
-**Given** the SSL documentation contains the misspelled word "equivelent"  
-**When** the file is edited  
-**Then** the word is changed to "equivalent" at the exact location of the typo
+**Given** the file `README.md` contains the misspelled word "equivelent"  
+**When** the typo is corrected  
+**Then** the word "equivelent" is replaced with "equivalent" at its exact location
 
 ### AC-2: No other changes
 **Given** this is a documentation-only typo fix  
-**When** the correction is made  
-**Then** no other text, formatting, or files are modified
+**When** the file is saved  
+**Then** only the single word on the identified line is modified, with no other text, formatting, whitespace, or files changed
 
-### AC-3: File identified
-**Given** the typo exists in SSL-related documentation  
-**When** searching the repository  
-**Then** the exact file path and line number containing "equivelent" is identified
+### AC-3: Verification by diff
+**Given** the correction has been made  
+**When** `git diff` is run  
+**Then** it shows only the one-word change from "equivelent" to "equivalent" on a single line in `README.md`
 
 ## Verification
 
-- Manual inspection confirms "equivelent" no longer appears in the identified file
+- Manual inspection of `README.md` confirms "equivelent" no longer appears
 - Manual inspection confirms "equivalent" appears in its place
-- `git diff` shows only the single-word change on the identified line
-- No other files show modifications in the diff
+- `git diff` shows exactly one line changed in `README.md`, with only the word replacement
+- `git status` shows no modifications to any other files
 
 ## Out of Scope
 
-- Searching for or fixing other typos
+- Searching for or fixing other typos in the repository
 - Modifying code, tests, or configuration files
 - Adding spell-check tooling or CI checks
-- Changing documentation structure or formatting
+- Changing documentation structure, formatting, or content beyond the single word
