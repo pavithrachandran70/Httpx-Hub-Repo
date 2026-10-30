@@ -12,7 +12,7 @@ Adding a missing export to __all__ is a single-file change with clear acceptance
 
 1. [x] **analyst (inline_story)** — The ticket states exactly what to change and where; one story with AC and implementation notes is sufficient.
    - focus: Focus on the __all__ addition and the import test; no requirements decomposition needed.
-2. [ ] **architect_gate (review)** _(auto)_ — Human approval of specs and this plan before Dev.
+2. [x] **architect_gate (review)** _(auto)_ — Human approval of specs and this plan before Dev.
 3. [ ] **dev** _(auto)_ — Fixed execution step.
 4. [ ] **pre_pr_qa** _(auto)_ — Fixed execution step.
 5. [ ] **open_pr** _(auto)_ — Fixed execution step.
