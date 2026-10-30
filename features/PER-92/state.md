@@ -1,20 +1,20 @@
 ---
 schema_version: 1
 key: PER-92
-status: waiting_architect_review
-current_node: architect_gate
+status: in_development
+current_node: dev
 track: quick
 involved_repos:
 - Https-test
 depends_on: []
 owner: pavc
-lease_until: '2026-11-01T11:53:32.501426+00:00'
-revision: 19
+lease_until: '2026-11-01T11:56:30.935420+00:00'
+revision: 27
 hub_sha: null
 ticket_hash: 081be5c2d021416c
 jira_hash: 081be5c2d021416c
-tpm_approved: false
-specs_locked: false
+tpm_approved: true
+specs_locked: true
 skills_lock:
   bmad: 1cbcfa272fe65787c06a1fa164a901f46117cca7
 stories:
@@ -28,7 +28,7 @@ pr_ids:
   hub_plan: '14'
   hub_arch: '15'
   hub: '15'
-waiting_for: architect_review
+waiting_for: null
 tokens_in: 23545
 tokens_out: 2149
 cost_anthropic_usd: 0.10197
@@ -77,6 +77,22 @@ history:
 - node: architect_gate
   note: awaiting human hub PR approval
   at: '2026-10-30T11:54:12.619051+00:00'
+- node: architect_gate
+  note: approved via hub PR (reconcile)
+  at: '2026-10-30T11:56:30.913655+00:00'
+- node: architect_gate
+  note: "forge unlocked architect_review \u2192 resume"
+  at: '2026-10-30T11:56:30.935439+00:00'
+- node: dev
+  note: starting
+  at: '2026-10-30T11:56:33.142422+00:00'
+- node: dev
+  note: 'not checked before PR, commands empty in project.yaml: repos.Https-test.commands.test,
+    repos.Https-test.commands.lint'
+  at: '2026-10-30T11:56:33.142477+00:00'
+- node: dev
+  note: done 01-Https-test
+  at: '2026-10-30T12:01:26.694419+00:00'
 ---
 
 # Feature state
