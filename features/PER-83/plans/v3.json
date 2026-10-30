@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "key": "PER-83",
+  "source": "llm",
+  "complexity": "simple",
+  "summary": "Resource leak fix in async response handling: analyst produces the inline story, architect documents which module closes the response on cancel/timeout and how the connection returns to the pool, designer writes the file-level plan and test coverage.",
+  "track_hint": "quick",
+  "steps": [
+    {
+      "node": "analyst",
+      "activity": "inline_story",
+      "why": "The ticket already specifies the bug, acceptance criteria, and a repro; one implementable story is sufficient.",
+      "instructions": "",
+      "auto": false,
+      "status": "done",
+      "rerun": false
+    },
+    {
+      "node": "architect",
+      "activity": "hld",
+      "why": "Document which module closes the async response on cancel or timeout and how the connection is returned to the pool.",
+      "instructions": "Focus on the async response cleanup mechanism: which module closes the response, how the connection returns to the pool, and the cancel/timeout handling contract.",
+      "auto": false,
+      "status": "done",
+      "rerun": false
+    },
+    {
+      "node": "designer",
+      "activity": "lld",
+      "why": "Write the file-level plan of the modules that change and the tests that cover them.",
+      "instructions": "Produce a concrete file plan for the modules handling async response cleanup, and specify the tests covering cancel and timeout scenarios.",
+      "auto": false,
+      "status": "done",
+      "rerun": false
+    },
+    {
+      "node": "merge_pack",
+      "activity": "pack",
+      "why": "Pack per-ticket specs into merged_plan.md for review.",
+      "instructions": "",
+      "auto": true,
+      "status": "done",
+      "rerun": false
+    },
+    {
+      "node": "architect_gate",
+      "activity": "review",
+      "why": "Human approval of specs and this plan before Dev.",
+      "instructions": "",
+      "auto": true,
+      "status": "pending",
+      "rerun": true
+    },
+    {
+      "node": "dev",
+      "activity": null,
+      "why": "Fixed execution step.",
+      "instructions": "",
+      "auto": true,
+      "status": "pending",
+      "rerun": false
+    },
+    {
+      "node": "pre_pr_qa",
+      "activity": null,
+      "why": "Fixed execution step.",
+      "instructions": "",
+      "auto": true,
+      "status": "pending",
+      "rerun": false
+    },
+    {
+      "node": "open_pr",
+      "activity": null,
+      "why": "Fixed execution step.",
+      "instructions": "",
+      "auto": true,
+      "status": "pending",
+      "rerun": false
+    },
+    {
+      "node": "pr_review",
+      "activity": null,
+      "why": "Fixed execution step.",
+      "instructions": "",
+      "auto": true,
+      "status": "pending",
+      "rerun": false
+    },
+    {
+      "node": "merge",
+      "activity": null,
+      "why": "Fixed execution step.",
+      "instructions": "",
+      "auto": true,
+      "status": "pending",
+      "rerun": false
+    }
+  ],
+  "skipped": [
+    {
+      "node": "tpm_gate",
+      "why": "Scope is clear and internal: fixing a resource leak bug with no ambiguity."
+    },
+    {
+      "node": "scrum_master",
+      "why": "Single behavioral fix in one repo does not need breakdown into multiple stories."
+    },
+    {
+      "node": "test_architect",
+      "why": "Designer will write the test plan as part of the file-level design; no separate test architecture step needed."
+    },
+    {
+      "node": "critic",
+      "why": "Only three sequential spec documents (story, HLD, LLD) with no conflicting concerns to cross-check."
+    }
+  ],
+  "suggested_roles": [],
+  "notes": [],
+  "created_at": "2026-10-30T06:18:07.879816+00:00",
+  "version": 3,
+  "trigger": "review",
+  "gate": "plan_review",
+  "feedback": [
+    {
+      "id": "hub#4:issue-6516360849",
+      "source": "pr_conversation",
+      "body": "Plan change: keep analyst first, with activity inline_story. Do not put any other role before analyst.\r\n\r\nAfter analyst, add architect, then designer. Architect documents which module closes the async response on cancel or timeout and how the connection is returned to the pool. Designer writes the file-level plan of the modules that change and the tests that cover them.\r\n\r\nDo not add tpm_gate, scrum_master, test_architect, or critic. Do not duplicate analyst.",
+      "author": "pavithrachandran70",
+      "path": null,
+      "line": null,
+      "pr": "hub#4"
+    }
+  ],
+  "feedback_errors": [],
+  "seen_feedback_ids": [
+    "hub#4:issue-6516292683",
+    "hub#4:issue-6516360849"
+  ],
+  "change_summary": "Added architect after analyst to document response cleanup and connection pooling, then designer to write file-level plan and test coverage, per reviewer guidance.",
+  "changes": {
+    "added": [
+      "architect",
+      "designer"
+    ],
+    "removed": [],
+    "rerun": [],
+    "kept": []
+  },
+  "addressed": [
+    {
+      "feedback_id": "hub#4:issue-6516360849",
+      "change": "Kept analyst first with inline_story; added architect then designer; removed all other roles as instructed."
+    }
+  ],
+  "unresolved_questions": [],
+  "requires_review": true
+}

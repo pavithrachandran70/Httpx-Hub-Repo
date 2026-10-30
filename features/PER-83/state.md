@@ -8,8 +8,8 @@ involved_repos:
 - Https-test
 depends_on: []
 owner: pavc
-lease_until: '2026-11-01T06:19:22.094061+00:00'
-revision: 36
+lease_until: '2026-11-01T06:31:57.701172+00:00'
+revision: 51
 hub_sha: null
 ticket_hash: 73cdb71f28355b6c
 jira_hash: 73cdb71f28355b6c
@@ -23,15 +23,16 @@ child_ticket_keys: []
 critic_iterations: 0
 dev_retries: 0
 pr_revision_rounds: 0
-gate_rounds: {}
+gate_rounds:
+  plan: 1
 pr_ids:
-  hub_plan: '4'
   hub_arch: '5'
   hub: '5'
+  hub_plan: '6'
 waiting_for: architect_review
-tokens_in: 73908
-tokens_out: 18204
-cost_anthropic_usd: 0.49446
+tokens_in: 106977
+tokens_out: 24173
+cost_anthropic_usd: 0.683202
 history:
 - node: intake
   note: snapshot written
@@ -92,6 +93,34 @@ history:
 - node: architect_gate
   note: awaiting human hub PR approval
   at: '2026-10-30T06:24:20.845986+00:00'
+- node: catch_up
+  note: "hub comments \u2192 planner revision"
+  at: '2026-10-30T06:28:49.051111+00:00'
+- node: planner
+  note: 'plan v4 from architect_review: added=[] removed=[] rerun=[''designer''] kept=[''analyst'',
+    ''architect''] unresolved=0'
+  at: '2026-10-30T06:29:03.992904+00:00'
+- node: plan_review
+  note: awaiting human hub PR approval (plan)
+  at: '2026-10-30T06:29:12.894255+00:00'
+- node: catch_up
+  note: "hub comments \u2192 planner revision"
+  at: '2026-10-30T06:29:53.451425+00:00'
+- node: plan_review
+  note: approved via hub PR (reconcile)
+  at: '2026-10-30T06:31:57.654713+00:00'
+- node: plan_review
+  note: "forge unlocked plan_review \u2192 resume"
+  at: '2026-10-30T06:31:57.701232+00:00'
+- node: designer
+  note: lld updated
+  at: '2026-10-30T06:33:21.607883+00:00'
+- node: merge_pack
+  note: merged 1 ticket(s)
+  at: '2026-10-30T06:33:21.613264+00:00'
+- node: architect_gate
+  note: awaiting human hub PR approval
+  at: '2026-10-30T06:33:26.318573+00:00'
 ---
 
 # Feature state

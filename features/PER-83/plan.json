@@ -3,7 +3,7 @@
   "key": "PER-83",
   "source": "llm",
   "complexity": "simple",
-  "summary": "Resource leak fix in async response handling: analyst produces the inline story, architect documents which module closes the response on cancel/timeout and how the connection returns to the pool, designer writes the file-level plan and test coverage.",
+  "summary": "Single behavioral fix in one repo with clear scope; rerunning designer only to add finally block around stream read in AsyncClient.",
   "track_hint": "quick",
   "steps": [
     {
@@ -19,7 +19,7 @@
       "node": "architect",
       "activity": "hld",
       "why": "Document which module closes the async response on cancel or timeout and how the connection is returned to the pool.",
-      "instructions": "Focus on the async response cleanup mechanism: which module closes the response, how the connection returns to the pool, and the cancel/timeout handling contract.",
+      "instructions": "",
       "auto": false,
       "status": "done",
       "rerun": false
@@ -28,7 +28,7 @@
       "node": "designer",
       "activity": "lld",
       "why": "Write the file-level plan of the modules that change and the tests that cover them.",
-      "instructions": "Produce a concrete file plan for the modules handling async response cleanup, and specify the tests covering cancel and timeout scenarios.",
+      "instructions": "In the AsyncClient file plan, specify that response.aclose() must be called from a finally block around the stream read, ensuring both cancel and timeout close the response before the error propagates. Name the finally block explicitly in the file plan for httpx/_client.py. Keep the regression tests in tests/client/test_async_client.py.",
       "auto": false,
       "status": "done",
       "rerun": false
@@ -117,40 +117,43 @@
   ],
   "suggested_roles": [],
   "notes": [],
-  "created_at": "2026-10-30T06:18:07.879816+00:00",
-  "version": 3,
+  "created_at": "2026-10-30T06:29:03.139903+00:00",
+  "version": 4,
   "trigger": "review",
-  "gate": "plan_review",
+  "gate": "architect_review",
   "feedback": [
     {
-      "id": "hub#4:issue-6516360849",
+      "id": "hub#5:issue-6516499740",
       "source": "pr_conversation",
-      "body": "Plan change: keep analyst first, with activity inline_story. Do not put any other role before analyst.\r\n\r\nAfter analyst, add architect, then designer. Architect documents which module closes the async response on cancel or timeout and how the connection is returned to the pool. Designer writes the file-level plan of the modules that change and the tests that cover them.\r\n\r\nDo not add tpm_gate, scrum_master, test_architect, or critic. Do not duplicate analyst.",
+      "body": "Spec change: rerun designer only. Keep analyst and architect. Do not add or remove any role.\r\n\r\nIn the LLD, the cleanup must call response.aclose() from a finally block around the stream read, so cancel and timeout both close the response before the error propagates. Name that finally block in the file plan for AsyncClient, and keep the regression tests in tests/client/test_async_client.py.",
       "author": "pavithrachandran70",
       "path": null,
       "line": null,
-      "pr": "hub#4"
+      "pr": "hub#5"
     }
   ],
   "feedback_errors": [],
   "seen_feedback_ids": [
     "hub#4:issue-6516292683",
-    "hub#4:issue-6516360849"
+    "hub#4:issue-6516360849",
+    "hub#5:issue-6516499740"
   ],
-  "change_summary": "Added architect after analyst to document response cleanup and connection pooling, then designer to write file-level plan and test coverage, per reviewer guidance.",
+  "change_summary": "Rerunning designer only to add finally block specification around stream read in AsyncClient for proper cleanup on cancel and timeout.",
   "changes": {
-    "added": [
-      "architect",
+    "added": [],
+    "removed": [],
+    "rerun": [
       "designer"
     ],
-    "removed": [],
-    "rerun": [],
-    "kept": []
+    "kept": [
+      "analyst",
+      "architect"
+    ]
   },
   "addressed": [
     {
-      "feedback_id": "hub#4:issue-6516360849",
-      "change": "Kept analyst first with inline_story; added architect then designer; removed all other roles as instructed."
+      "feedback_id": "hub#5:issue-6516499740",
+      "change": "Designer rerun with instructions to specify response.aclose() in a finally block around stream read in AsyncClient file plan, keeping tests in test_async_client.py"
     }
   ],
   "unresolved_questions": [],
