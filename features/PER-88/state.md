@@ -1,15 +1,15 @@
 ---
 schema_version: 1
 key: PER-88
-status: developed
-current_node: dev
+status: changes_requested
+current_node: pr_review
 track: standard
 involved_repos:
 - Https-test
 depends_on: []
 owner: pavc
 lease_until: '2026-11-01T07:58:28.272232+00:00'
-revision: 22
+revision: 29
 hub_sha: null
 ticket_hash: 7d8dc47cdf066e61
 jira_hash: 7d8dc47cdf066e61
@@ -28,10 +28,11 @@ pr_ids:
   hub_plan: '7'
   hub_arch: '8'
   hub: '8'
-waiting_for: human_pr
-tokens_in: 22170
-tokens_out: 3073
-cost_anthropic_usd: 0.112289
+  Https-test: '3'
+waiting_for: spec_revision
+tokens_in: 30244
+tokens_out: 3692
+cost_anthropic_usd: 0.142948
 history:
 - node: intake
   note: snapshot written
@@ -76,6 +77,46 @@ history:
 - node: dev
   note: 'human_mode: code ready, PR deferred'
   at: '2026-10-30T08:01:06.738057+00:00'
+- node: dev
+  note: 'human_mode: resume opens PR'
+  at: '2026-10-30T08:25:20.960587+00:00'
+- node: pre_pr_qa
+  note: report written
+  at: '2026-10-30T08:25:20.964295+00:00'
+- node: open_pr
+  note: push Https-test ok
+  at: '2026-10-30T08:25:28.838604+00:00'
+- node: open_pr
+  note: PRs opened Https-test:3
+  at: '2026-10-30T08:25:28.838634+00:00'
+- node: pr_review
+  note: diff loaded Https-test chars=6411
+  at: '2026-10-30T08:25:30.320720+00:00'
+- node: pr_review
+  note: 'inline review Https-test: 2 comment(s)'
+  at: '2026-10-30T08:25:46.067818+00:00'
+- node: pr_review
+  note: 'Https-test:issue:major:**AC-1 VIOLATION: Missing actual fix implementation**
+
+
+    The diff adds comprehensi'
+  at: '2026-10-30T08:25:50.040904+00:00'
+- node: pr_review
+  note: "major issue classified \u2192 human (deferred; continue auto-fix)"
+  at: '2026-10-30T08:25:52.041299+00:00'
+- node: pr_review
+  note: 'Https-test:issue:major:**AC-4 PARTIAL: Tests verify the fix, but the fix
+    itself is missing**
+
+
+    AC-4 requ'
+  at: '2026-10-30T08:25:53.722522+00:00'
+- node: pr_review
+  note: "major issue classified \u2192 human (deferred; continue auto-fix)"
+  at: '2026-10-30T08:25:55.347199+00:00'
+- node: pr_review
+  note: "major issue \u2192 delta spec gate (human)"
+  at: '2026-10-30T08:25:55.347947+00:00'
 ---
 
 # Feature state
