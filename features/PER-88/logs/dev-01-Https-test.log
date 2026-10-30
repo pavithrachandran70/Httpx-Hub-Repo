@@ -1,0 +1,11 @@
+`Client.stream()` and `AsyncClient.stream()` already resolve auth the same way as `request()`, `get()`, and `post()`: a per-call `auth=` wins, otherwise the client-level `auth` is used. That path goes through `send()` and `_build_request_auth()`.
+
+Regression coverage is now in `tests/client/test_auth.py`. A mock endpoint returns 200 only for the expected Basic credentials and 401 otherwise. The new tests check:
+
+- Sync and async `stream()` inherit client-level auth.
+- A per-call `auth=` overrides client-level auth for both clients.
+- `stream()`, `get()`, `post()`, and `request()` send the same credentials.
+
+`pytest tests/client/test_auth.py -v` finished with 88 passed and 1 skipped.
+
+**File changed:** `tests/client/test_auth.py`
