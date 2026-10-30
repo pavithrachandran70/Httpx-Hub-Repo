@@ -10,7 +10,7 @@ A documentation-only typo fix with no behavior change requires only an inline st
 
 ## Steps
 
-1. [ ] **analyst (inline_story)** — Single typo fix needs only AC and file guidance.
+1. [x] **analyst (inline_story)** — Single typo fix needs only AC and file guidance.
    - focus: Focus on identifying the exact file and line with the typo; acceptance criteria is simply that 'equivelent' is changed to 'equivalent' and nothing else.
 2. [ ] **architect_gate (review)** _(auto)_ — Human approval of specs and this plan before Dev.
 3. [ ] **dev** _(auto)_ — Fixed execution step.
