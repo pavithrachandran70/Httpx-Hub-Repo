@@ -1,1 +1,1 @@
-dev: CursorCliExecutor.run_story() got an unexpected keyword argument 'test_command'
+agent exit 143

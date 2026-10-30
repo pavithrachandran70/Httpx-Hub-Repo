@@ -9,7 +9,7 @@ involved_repos:
 depends_on: []
 owner: pavc
 lease_until: '2026-11-01T06:34:17.718531+00:00'
-revision: 65
+revision: 71
 hub_sha: null
 ticket_hash: 73cdb71f28355b6c
 jira_hash: 73cdb71f28355b6c
@@ -29,7 +29,7 @@ pr_ids:
   hub_arch: '5'
   hub: '5'
   hub_plan: '6'
-waiting_for: dirty_worktree
+waiting_for: null
 tokens_in: 106977
 tokens_out: 24173
 cost_anthropic_usd: 0.683202
@@ -139,6 +139,12 @@ history:
 - node: dev
   note: dirty worktree stashed
   at: '2026-10-30T06:46:56.019966+00:00'
+- node: dev
+  note: starting
+  at: '2026-10-30T06:47:42.984956+00:00'
+- node: dev
+  note: done 01-Https-test (verify-ok; agent status=error)
+  at: '2026-10-30T07:22:45.668507+00:00'
 ---
 
 # Feature state
