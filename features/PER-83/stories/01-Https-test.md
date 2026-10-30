@@ -134,7 +134,7 @@ async def request(self, method, url, **kwargs):
 
 #### Test 1: `test_async_cancel_during_stream_closes_response` (AC1)
 
-**Purpose:** Verify that cancelling a request via `asyncio.wait_for` timeout during streaming read closes the response and returns the connection to the pool.
+**Purpose:** Verify that cancelling a request via `asyncio.wait_for` timeout during streaming read closes the response and returns the connection to the pool, and that no `RuntimeError` about in-flight connections is raised on client exit.
 
 **Setup:**
 - Local ASGI app that yields bytes with `asyncio.sleep()` delays between chunks (simulate slow stream)
@@ -146,8 +146,8 @@ async def request(self, method, url, **kwargs):
 
 **Assertions:**
 - `asyncio.TimeoutError` is raised (expected cancellation)
-- No `RuntimeError` about in-flight connections on `async with client` exit (implicit in clean exit)
-- Connection pool in-flight count is zero after client exit (if pool exposes this for testing)
+- Connection pool in-flight count is zero after client exit (explicit check via `_inflight_requests()`)
+- **AC4 guard:** No `RuntimeError` about in-flight connections on `async with client` exit (wrap exit in try/except or add explicit assertion that exit completes)
 
 **Implementation:**
 
@@ -157,6 +157,7 @@ async def test_async_cancel_during_stream_closes_response():
     """
     AC1: Cancelling via asyncio.wait_for timeout during stream closes
     response and returns connection to pool.
+    AC4: No RuntimeError on client exit.
     """
     async def slow_stream_app(scope, receive, send):
         await send({
@@ -177,17 +178,25 @@ async def test_async_cancel_during_stream_closes_response():
             'more_body': False,
         })
 
-    async with httpx.AsyncClient(app=slow_stream_app) as client:
-        with pytest.raises(asyncio.TimeoutError):
-            await asyncio.wait_for(client.get("http://test/stream"), timeout=1.0)
-        # Implicit assertion: no RuntimeError on clean exit
+    # AC4 guard: Wrap client exit to explicitly verify no RuntimeError
+    try:
+        async with httpx.AsyncClient(app=slow_stream_app) as client:
+            with pytest.raises(asyncio.TimeoutError):
+                await asyncio.wait_for(client.get("http://test/stream"), timeout=1.0)
+            # Verify connection returned to pool before __aexit__
+            assert _inflight_requests(client) == []
+        # Explicit AC4 verification: __aexit__ completed without RuntimeError
+    except RuntimeError as e:
+        if "connection pool was closed while" in str(e):
+            pytest.fail(f"AC4 violation: {e}")
+        raise
 ```
 
 ---
 
 #### Test 2: `test_async_timeout_during_stream_closes_response` (AC2)
 
-**Purpose:** Verify that a client-configured timeout during streaming read closes the response and returns the connection to the pool.
+**Purpose:** Verify that a client-configured timeout during streaming read closes the response and returns the connection to the pool, and that no `RuntimeError` about in-flight connections is raised on client exit.
 
 **Setup:**
 - Same local ASGI app (slow stream)
@@ -199,8 +208,8 @@ async def test_async_cancel_during_stream_closes_response():
 
 **Assertions:**
 - Timeout exception is raised (expected)
-- No `RuntimeError` about in-flight connections on client exit
 - Connection pool in-flight count is zero
+- **AC4 guard:** No `RuntimeError` about in-flight connections on client exit (wrap exit in try/except or add explicit assertion)
 
 **Implementation:**
 
@@ -210,6 +219,7 @@ async def test_async_timeout_during_stream_closes_response():
     """
     AC2: Client-configured timeout during stream closes response and
     returns connection to pool.
+    AC4: No RuntimeError on client exit.
     """
     async def slow_stream_app(scope, receive, send):
         await send({
@@ -230,17 +240,25 @@ async def test_async_timeout_during_stream_closes_response():
             'more_body': False,
         })
 
-    async with httpx.AsyncClient(app=slow_stream_app, timeout=1.0) as client:
-        with pytest.raises((httpx.ReadTimeout, httpx.TimeoutException)):
-            await client.get("http://test/stream")
-        # Implicit assertion: no RuntimeError on clean exit
+    # AC4 guard: Wrap client exit to explicitly verify no RuntimeError
+    try:
+        async with httpx.AsyncClient(app=slow_stream_app, timeout=1.0) as client:
+            with pytest.raises((httpx.ReadTimeout, httpx.TimeoutException)):
+                await client.get("http://test/stream")
+            # Verify connection returned to pool before __aexit__
+            assert _inflight_requests(client) == []
+        # Explicit AC4 verification: __aexit__ completed without RuntimeError
+    except RuntimeError as e:
+        if "connection pool was closed while" in str(e):
+            pytest.fail(f"AC4 violation: {e}")
+        raise
 ```
 
 ---
 
 #### Test 3: `test_async_cancel_during_body_iteration_closes_response` (AC1 edge case)
 
-**Purpose:** Verify that cancellation during explicit body iteration (user code calling `response.aiter_bytes()`) closes the response and returns the connection to the pool.
+**Purpose:** Verify that cancellation during explicit body iteration (user code calling `response.aiter_bytes()`) closes the response and returns the connection to the pool, and that no `RuntimeError` about in-flight connections is raised on client exit.
 
 **Setup:**
 - Local ASGI app (slow stream)
@@ -252,7 +270,8 @@ async def test_async_timeout_during_stream_closes_response():
 
 **Assertions:**
 - Response is closed
-- No `RuntimeError` on client exit
+- Connection pool in-flight count is zero
+- **AC4 guard:** No `RuntimeError` on client exit
 
 **Implementation:**
 
@@ -262,6 +281,7 @@ async def test_async_cancel_during_body_iteration_closes_response():
     """
     AC1 edge case: Cancellation during explicit body iteration closes
     response and returns connection to pool.
+    AC4: No RuntimeError on client exit.
     """
     async def slow_stream_app(scope, receive, send):
         await send({
@@ -282,17 +302,26 @@ async def test_async_cancel_during_body_iteration_closes_response():
             'more_body': False,
         })
 
-    async with httpx.AsyncClient(app=slow_stream_app) as client:
-        response = await client.get("http://test/stream", stream=True)
-        
-        async def consume_with_timeout():
-            async with response:
-                async for chunk in response.aiter_bytes():
-                    pass  # Will timeout mid-iteration
-        
-        with pytest.raises(asyncio.TimeoutError):
-            await asyncio.wait_for(consume_with_timeout(), timeout=1.0)
-        # Implicit assertion: no RuntimeError on client exit
+    # AC4 guard: Wrap client exit to explicitly verify no RuntimeError
+    try:
+        async with httpx.AsyncClient(app=slow_stream_app) as client:
+            response = await client.get("http://test/stream", stream=True)
+            
+            async def consume_with_timeout():
+                async with response:
+                    async for chunk in response.aiter_bytes():
+                        pass  # Will timeout mid-iteration
+            
+            with pytest.raises(asyncio.TimeoutError):
+                await asyncio.wait_for(consume_with_timeout(), timeout=1.0)
+            
+            # Verify connection returned to pool before __aexit__
+            assert _inflight_requests(client) == []
+        # Explicit AC4 verification: __aexit__ completed without RuntimeError
+    except RuntimeError as e:
+        if "connection pool was closed while" in str(e):
+            pytest.fail(f"AC4 violation: {e}")
+        raise
 ```
 
 ---
@@ -307,7 +336,7 @@ async def test_async_cancel_during_body_iteration_closes_response():
 
 #### Test 4: `test_sync_timeout_during_stream_closes_response` (AC3)
 
-**Purpose:** Verify sync `Client` exhibits the same cleanup behavior on timeout during streaming read as the async client.
+**Purpose:** Verify sync `Client` exhibits the same cleanup behavior on timeout during streaming read as the async client: closes the response, returns the connection to the pool, and exits without raising an in-flight connection `RuntimeError`.
 
 **Setup:**
 - Local WSGI app (slow stream, using `time.sleep()` for sync delays)
@@ -319,7 +348,8 @@ async def test_async_cancel_during_body_iteration_closes_response():
 
 **Assertions:**
 - Timeout exception is raised
-- No in-flight connection error on client exit (sync equivalent of `RuntimeError`)
+- Connection pool in-flight count is zero
+- **AC3 guard:** No in-flight connection `RuntimeError` on client exit (wrap exit in try/except or add explicit assertion)
 
 **Implementation:**
 
@@ -330,6 +360,7 @@ def test_sync_timeout_during_stream_closes_response():
     """
     AC3: Sync client timeout during stream closes response and returns
     connection to pool, consistent with async behavior.
+    No RuntimeError on client exit.
     """
     def slow_stream_app(environ, start_response):
         status = '200 OK'
@@ -339,13 +370,23 @@ def test_sync_timeout_during_stream_closes_response():
             time.sleep(0.5)
             yield f'chunk{i}'.encode()
 
-    with httpx.Client(app=slow_stream_app, timeout=1.0) as client:
-        with pytest.raises((httpx.ReadTimeout, httpx.TimeoutException)):
-            client.get("http://test/stream")
-        # Implicit assertion: no in-flight error on clean exit
+    # AC3 guard: Wrap client exit to explicitly verify no RuntimeError
+    try:
+        with httpx.Client(app=slow_stream_app, timeout=1.0) as client:
+            with pytest.raises((httpx.ReadTimeout, httpx.TimeoutException)):
+                client.get("http://test/stream")
+            # Verify connection returned to pool before __exit__
+            # (sync equivalent check, if pool exposes _requests or similar)
+            pool = client._transport._pool
+            assert list(pool._requests) == []
+        # Explicit AC3 verification: __exit__ completed without RuntimeError
+    except RuntimeError as e:
+        if "connection pool was closed while" in str(e):
+            pytest.fail(f"AC3 violation: {e}")
+        raise
 ```
 
-**Note:** If sync client uses threading for timeouts, the cancellation mechanism may differ structurally from async. Document behavior differences if found during implementation.
+**Note:** If sync client uses threading for timeouts, the cancellation mechanism may differ structurally from async. The `finally` block cleanup pattern applies the same way: `response.close()` in the `finally` block around streaming. Document behavior differences if found during implementation.
 
 ---
 
@@ -451,22 +492,22 @@ finally:
 ### Test Coverage Summary (4 tests total)
 
 **File:** `tests/client/test_async_client.py` (3 tests)
-1. `test_async_cancel_during_stream_closes_response` — AC1 (asyncio.wait_for cancel)
-2. `test_async_timeout_during_stream_closes_response` — AC2 (client timeout)
-3. `test_async_cancel_during_body_iteration_closes_response` — AC1 edge case (user iteration cancel)
+1. `test_async_cancel_during_stream_closes_response` — AC1 (asyncio.wait_for cancel) + AC4 (no RuntimeError on exit)
+2. `test_async_timeout_during_stream_closes_response` — AC2 (client timeout) + AC4 (no RuntimeError on exit)
+3. `test_async_cancel_during_body_iteration_closes_response` — AC1 edge case (user iteration cancel) + AC4 (no RuntimeError on exit)
 
 **File:** `tests/client/test_client.py` (1 test)
-4. `test_sync_timeout_during_stream_closes_response` — AC3 (sync client parity)
+4. `test_sync_timeout_during_stream_closes_response` — AC3 (sync client parity, no RuntimeError on exit)
 
 ### Verification Approach (4 items, matching breakdown count)
 
 1. **Run new async tests:** `pytest tests/client/test_async_client.py::test_async_cancel_during_stream_closes_response tests/client/test_async_client.py::test_async_timeout_during_stream_closes_response tests/client/test_async_client.py::test_async_cancel_during_body_iteration_closes_response`
    - All three tests pass
-   - No `RuntimeError` about in-flight connections on client exit in any test
+   - No `RuntimeError` about in-flight connections on client exit in any test (explicitly verified by try/except wrapper)
 
 2. **Run sync test:** `pytest tests/client/test_client.py::test_sync_timeout_during_stream_closes_response`
    - Test passes
-   - No in-flight connection error on sync client exit
+   - No in-flight connection error on sync client exit (explicitly verified by try/except wrapper)
 
 3. **Run full test suite:** `pytest tests/`
    - All existing tests pass (no regression)

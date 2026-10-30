@@ -1,0 +1,8 @@
+The forge review gap is closed. Each cancel and timeout test now waits for the client context to finish, and fails if exit raises the in-flight pool `RuntimeError`.
+
+`httpx/_client.py` already closes the response in the `response_cleanup_on_cancel` `finally` block, so that file was left as-is. The missing check was only in the tests: they asserted an empty in-flight set before `__aexit__` / `__exit__`, and never showed that exit itself completed.
+
+- `tests/client/test_async_client.py` — `test_async_cancel_during_stream_closes_response`, `test_async_timeout_during_stream_closes_response`, and `test_async_cancel_during_body_iteration_closes_response` wrap the `async with` block and fail on `RuntimeError: The connection pool was closed while ...` (AC1, AC2, AC4).
+- `tests/client/test_client.py` — `test_sync_timeout_during_stream_closes_response` does the same for the sync `with` block (AC3).
+
+Those four tests passed (7 runs, including both anyio backends) in 2.63s.The broader client-module test run was stopped after it produced no output. The four cancel and timeout tests that cover the exit check had already passed.

@@ -1,0 +1,24 @@
+{
+  "comment_ids": [
+    "4421360970",
+    "4421360975"
+  ],
+  "tier": "moderate",
+  "stories": [
+    "01-Https-test"
+  ],
+  "items": [
+    {
+      "comment_id": "4421360970",
+      "repo": "Https-test",
+      "path": "tests/client/test_async_client.py",
+      "tier": "moderate"
+    },
+    {
+      "comment_id": "4421360975",
+      "repo": "Https-test",
+      "path": "tests/client/test_client.py",
+      "tier": "moderate"
+    }
+  ]
+}
