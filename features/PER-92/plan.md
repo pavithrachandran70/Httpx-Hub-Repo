@@ -10,7 +10,7 @@ Single validation fix in one repo with clear acceptance criteria stated in the t
 
 ## Steps
 
-1. [ ] **analyst (inline_story)** — Convert ticket into implementable story with Given/When/Then and tech notes.
+1. [x] **analyst (inline_story)** — Convert ticket into implementable story with Given/When/Then and tech notes.
    - focus: Focus on the validation error type and test placement.
 2. [ ] **architect_gate (review)** _(auto)_ — Human approval of specs and this plan before Dev.
 3. [ ] **dev** _(auto)_ — Fixed execution step.
