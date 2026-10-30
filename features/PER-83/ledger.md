@@ -11,3 +11,5 @@ JSON:{"key": "pr-comment-fixed:PER-83:Https-test:4421360970", "intent": "fix_cod
 JSON:{"key": "pr-comment-fixed:PER-83:Https-test:4421360975", "intent": "fix_code", "result": "4421360975", "at": "2026-10-30T07:34:00.867216+00:00"}
 JSON:{"key": "pr-comment-resolved:PER-83:Https-test:4421360970", "intent": "resolved", "result": "4421360970", "at": "2026-10-30T07:34:11.057544+00:00"}
 JSON:{"key": "pr-comment-resolved:PER-83:Https-test:4421360975", "intent": "resolved", "result": "4421360975", "at": "2026-10-30T07:34:17.342499+00:00"}
+JSON:{"key": "pr-comment-fixed:PER-83:Https-test:4421509063", "intent": "major_human", "result": "4421509063", "at": "2026-10-30T07:50:41.341918+00:00"}
+JSON:{"key": "pr-comment-fixed:PER-83:Https-test:4421509068", "intent": "major_human", "result": "4421509068", "at": "2026-10-30T07:50:45.771905+00:00"}

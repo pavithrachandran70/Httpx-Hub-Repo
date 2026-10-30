@@ -1,15 +1,15 @@
 ---
 schema_version: 1
 key: PER-83
-status: developed
-current_node: dev
+status: escalated
+current_node: pr_review
 track: quick
 involved_repos:
 - Https-test
 depends_on: []
 owner: pavc
 lease_until: '2026-11-01T06:34:17.718531+00:00'
-revision: 88
+revision: 96
 hub_sha: null
 ticket_hash: 73cdb71f28355b6c
 jira_hash: 73cdb71f28355b6c
@@ -22,7 +22,7 @@ stories:
 child_ticket_keys: []
 critic_iterations: 0
 dev_retries: 0
-pr_revision_rounds: 1
+pr_revision_rounds: 2
 gate_rounds:
   plan: 1
 pr_ids:
@@ -30,10 +30,10 @@ pr_ids:
   hub: '5'
   hub_plan: '6'
   Https-test: '2'
-waiting_for: human_pr
-tokens_in: 161092
-tokens_out: 32945
-cost_anthropic_usd: 0.938459
+waiting_for: feature_pr_human
+tokens_in: 176100
+tokens_out: 34755
+cost_anthropic_usd: 0.995193
 history:
 - node: intake
   note: snapshot written
@@ -246,6 +246,72 @@ history:
 - node: dev
   note: 'human_mode: code ready, PR deferred'
   at: '2026-10-30T07:48:29.904478+00:00'
+- node: dev
+  note: 'human_mode: resume opens PR'
+  at: '2026-10-30T07:49:45.798219+00:00'
+- node: pre_pr_qa
+  note: report written
+  at: '2026-10-30T07:49:45.809721+00:00'
+- node: open_pr
+  note: push Https-test ok
+  at: '2026-10-30T07:49:48.372522+00:00'
+- node: open_pr
+  note: PRs opened Https-test:2
+  at: '2026-10-30T07:49:48.372570+00:00'
+- node: pr_review
+  note: diff loaded Https-test chars=13935
+  at: '2026-10-30T07:49:49.394599+00:00'
+- node: pr_review
+  note: 'inline review Https-test: 6 comment(s)'
+  at: '2026-10-30T07:50:20.703217+00:00'
+- node: pr_review
+  note: Https-test:issue:minor:**AC1/AC2 edge case:** `finally` runs even when `response`
+    is assigned but `resp
+  at: '2026-10-30T07:50:25.700201+00:00'
+- node: pr_review
+  note: Https-test:needs_human:major:**AC1 verification gap:** Test `test_async_cancel_during_body_iteration_closes_r
+  at: '2026-10-30T07:50:29.353322+00:00'
+- node: pr_review
+  note: Https-test:needs_human:moderate:**Potential bug:** `if not stream and response
+    is not None and not response.is_c
+  at: '2026-10-30T07:50:33.413535+00:00'
+- node: pr_review
+  note: Https-test:not_an_issue:None:**Process:** `.gitignore` adds ADLC/Cursor tooling
+    entries (`__pycache__`, `*.py
+  at: '2026-10-30T07:50:37.215711+00:00'
+- node: pr_review
+  note: Https-test:issue:major:**AC1/AC2 violation (async):** The `finally` block
+    only closes the response when
+  at: '2026-10-30T07:50:41.341247+00:00'
+- node: pr_review
+  note: "major issue classified \u2192 human (deferred; continue auto-fix)"
+  at: '2026-10-30T07:50:43.992751+00:00'
+- node: pr_review
+  note: 'Https-test:issue:major:**AC1/AC2 violation (sync):** The sync client''s `finally`
+    block only closes the '
+  at: '2026-10-30T07:50:45.771331+00:00'
+- node: pr_review
+  note: "major issue classified \u2192 human (deferred; continue auto-fix)"
+  at: '2026-10-30T07:50:48.277672+00:00'
+- node: pr_review
+  note: Https-test:issue:minor:**AC3 gap:** The async tests use `anyio_backend_name`
+    to support both asyncio an
+  at: '2026-10-30T07:50:50.094222+00:00'
+- node: pr_review
+  note: Https-test:issue:moderate:**AC3 incomplete:** `test_sync_timeout_during_stream_closes_response`
+    calls `cli
+  at: '2026-10-30T07:50:53.805922+00:00'
+- node: pr_review
+  note: "Https-test:needs_human:moderate:**Process note:** The `serve_in_thread` timeout\
+    \ guards (lines 275\u2013283 and 289\u201329"
+  at: '2026-10-30T07:50:58.622422+00:00'
+- node: pr_review
+  note: "Https-test:needs_human:minor:**Process note:** The `.gitignore` additions\
+    \ (lines 13\u201327) include ADLC/Cursor t"
+  at: '2026-10-30T07:51:02.303946+00:00'
+- node: pr_review
+  note: pr_revision exhausted
+  at: '2026-10-30T07:51:04.257842+00:00'
 ---
 
 # Feature state
